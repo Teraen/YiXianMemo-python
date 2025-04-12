@@ -25,7 +25,7 @@ class DragDetector:
                 break
         if win:
             ExchArea = [int(0.8*(win.right-win.left)+win.left), int(0.7*(win.bottom-win.top)+win.top)]
-            AbsoArea = [int(0.2*(win.right-win.left)+win.left), int(0.7*(win.bottom-win.top)+win.top)]
+            AbsoArea = [int(0.22*(win.right-win.left)+win.left), int(0.7*(win.bottom-win.top)+win.top)]
             return (win.left, win.top, win.right, win.bottom)  # (x1, y1, x2, y2)
         return None
 

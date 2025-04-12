@@ -8,10 +8,10 @@ Sect_pos= [
 ["p106", "灵气灌注", "坤卦", "土灵·碎", "抱气法", ],
 ["p107", "巨虎灵剑", "巽卦", "金灵印", "罗刹扑", ],
 ["p108", "震雷剑", "掌心雷", "金灵·针", "破空爪", ],
-["p109", "剑劈", "白鹤亮翅", "水灵印", "起势", ],
-["p110", "剑挡", "揽雀尾", "水灵·涛", "朝气蓬勃", ],
-["p111", "飞牙剑", "野马分鬃", "五行刺", "血气方刚", "野马分鬓", ],
-["p112", "骤风剑", "藕断丝连", "千斤坠", ],
+["p109", "剑劈", "白鹤亮翅", "水灵印", "千斤坠", ],
+["p110", "剑挡", "揽雀尾", "水灵·涛","起势", ],
+["p111", "飞牙剑", "野马分鬃", "五行刺", "野马分鬓",  "朝气蓬勃", "野马分禁" ],
+["p112", "骤风剑", "藕断丝连", "血气方刚", ],
 ["p201", "云剑·回守", "飞星刺", "木灵·复苏", "崩拳·撼", ],
 ["p202", "云剑·极意", "星弈·点", "木灵·疏影", "崩拳·缠", "星奔·点", ],
 ["p203", "云剑·无锋", "星弈·立", "火灵·聚炎", "崩拳·突", "星奔·立", ],
@@ -85,17 +85,16 @@ def Match(cardname):
     typ = ""
     pos = ""
     for lst in Sidjob_type:
-
-        if cardname in lst:
+        if any(item in cardname for item in lst):
             typ = lst[0]
             for lst in Sidejob_pos:
-                if cardname in lst:
+                if any(item in cardname for item in lst):
                     pos = lst[0]
                     break
             break
     if not pos:
         for lst in Sect_pos:
-            if cardname in lst:
+            if any(item in cardname for item in lst):
                 typ = "Sect"
                 pos = lst[0]
                 break

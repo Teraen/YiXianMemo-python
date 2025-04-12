@@ -1,4 +1,6 @@
 from OCR_xcg import Card_Name_OCR
+from send_data import send_data
+
 import re
 import time
 import os
@@ -38,6 +40,7 @@ def process_images_and_delete(folder_path):
                 ocr_result = Card_Name_OCR(file_path)
                 ocr_result = remove_digits(ocr_result)
                 result.append(ocr_result)
+                send_data(ocr_result)
                 # OCR成功后删除图片
                 os.remove(file_path)
                 
