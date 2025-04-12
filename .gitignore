@@ -2,7 +2,7 @@
 
 !Capture_xcg.py
 !Match_card.py
-!img_process.py
+!img_process_loop.py
 !server.py
 !InputEvent_listener.py
 !OCR_xcg.py
