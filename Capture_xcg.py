@@ -25,9 +25,9 @@ def capture_yxp_window(capture_mode, end_pos):
         top = int(-0.16 * height + end_pos[1])
         width, height = int(0.11 * width), int(0.32 * height)
     elif capture_mode == "absorb1":
-        left = int(-0.11*width + end_pos[0])
-        top = int(0.65 * height + top)
-        width, height = int(0.13 * width), int(0.17 * height)
+        left = int(-0.08 * width + end_pos[0])
+        top = int(-0.20 * height + end_pos[1])
+        width, height = int(0.12 * width), int(0.34 * height)
 
 
     with mss.mss() as sct:
@@ -46,9 +46,9 @@ def capture_yxp_window(capture_mode, end_pos):
         elif capture_mode == "absorb2" or capture_mode == "absorb1":
             save_path = save_dir2+ str(i) +".png"
 
-        mss.tools.to_png(screenshot.rgb, screenshot.size, output=save_path) #Save image
-        # mss.tools.to_png(screenshot.rgb, screenshot.size, output=backup_dir + str(i) + ".png") #save image for debug 
         i=i+1
+        mss.tools.to_png(screenshot.rgb, screenshot.size, output=save_path) #保存本地图片
+        # mss.tools.to_png(screenshot.rgb, screenshot.size, output=backup_dir + str(i) + ".png") #保存本地图片
 
 
 

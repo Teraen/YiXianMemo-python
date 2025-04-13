@@ -1,7 +1,7 @@
 from paddleocr import PaddleOCR, draw_ocr
 
 def Card_Name_OCR(img_path):
-    # img_path="C:/Users/TeraEnemy/Pictures/absorb/11.png"
+    # img_path="C:/Users/TeraEnemy/Pictures/exchange0.png"
     ocr = PaddleOCR(use_angle_cls=True, lang="ch")  # need to run only once to download and load model into memory
     card_name=[]
     result = ocr.ocr(img_path, cls=True)
@@ -13,7 +13,6 @@ def Card_Name_OCR(img_path):
                 BoxAngle=(float(line[0][1][0])-float(line[0][2][0]))/(float(line[0][1][1])-float(line[0][2][1]))
                 if EdgeRatio<0.6 and abs(BoxAngle)<=0.1:
                     card_name.append(line[1][0])
-    # print(result)
     return card_name[0]
 # # 显示结果
 # from PIL import Image
@@ -26,5 +25,3 @@ def Card_Name_OCR(img_path):
 #     im_show = draw_ocr(image, boxes, txts, scores, font_path='./fonts/simfang.ttf')
 #     im_show = Image.fromarray(im_show)
 #     im_show.save('C:/Users/TeraEnemy/Desktop/RESULT.png')
-
-# print(Card_Name_OCR("C:/Users/TeraEnemy/Pictures/absorb/12.png"))
