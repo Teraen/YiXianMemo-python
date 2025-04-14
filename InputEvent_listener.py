@@ -1,7 +1,7 @@
 import pygetwindow as gw
 import time
 from pynput import mouse
-from Capture_xcg import capture_yxp_window
+from Capture_xcg import capture_yxp_window, capture_upgrade
 
 
 class DragDetector:
@@ -53,6 +53,9 @@ class DragDetector:
                         capture_yxp_window("exchange1",end_pos)
                     elif end_pos[0]<AbsoArea[0] and end_pos[1]>AbsoArea[1]:
                         capture_yxp_window("absorb2",end_pos)
+                    else:
+                        capture_upgrade(end_pos)
+
                 self.dragging = False  # 释放鼠标，拖动结束
         elif button == mouse.Button.right:
             if pressed:

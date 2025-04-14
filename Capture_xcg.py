@@ -1,9 +1,10 @@
 import win32gui
 import mss
 import os
-
+import time
+import threading
 i=0
-pictures_path = os.path.join(os.environ['USERPROFILE'], 'Pictures')
+pictures_path = os.path.join(os.environ['USERPROFILE'], 'Pictures/YiXianMemo')
 def capture_yxp_window(capture_mode, end_pos):
     global i
     """截图《弈仙牌》窗口区域"""
@@ -16,11 +17,7 @@ def capture_yxp_window(capture_mode, end_pos):
 
     left, top, right, bottom = win32gui.GetWindowRect(hwnd)
     width, height = right - left, bottom - top
-    if capture_mode == "exchange1":
-        left = int(-0.055 * width + end_pos[0])
-        top = int(-0.16 * height + end_pos[1])
-        width, height = int(0.11 * width), int(0.32 * height)
-    elif capture_mode == "absorb2":
+    if capture_mode == "exchange1" or capture_mode == "absorb2" or capture_mode == "upgrade1":
         left = int(-0.055 * width + end_pos[0])
         top = int(-0.16 * height + end_pos[1])
         width, height = int(0.11 * width), int(0.32 * height)
@@ -28,27 +25,39 @@ def capture_yxp_window(capture_mode, end_pos):
         left = int(-0.11*width + end_pos[0])
         top = int(0.65 * height + top)
         width, height = int(0.13 * width), int(0.17 * height)
-
+    elif capture_mode == "upgrade2":
+        left = int(-0.065 * width + end_pos[0])
+        top = int(-0.07 * height + end_pos[1])
+        width, height = int(0.13 * width), int(0.10 * height)
 
     with mss.mss() as sct:
-        save_dir1 = pictures_path + "/exchange/"
-        save_dir2 = pictures_path + "/absorb/"
+        exchange_dir = pictures_path + "/exchange/"
+        absorb_dir = pictures_path + "/absorb/"
+        upgrade_dir = pictures_path + "/upgrade/"
         backup_dir = pictures_path + "/backup/"
-        if not os.path.exists(save_dir1):
-            os.makedirs(save_dir1)
-        if not os.path.exists(save_dir2):
-            os.makedirs(save_dir2)        
+        if not os.path.exists(exchange_dir):
+            os.makedirs(exchange_dir)
+        if not os.path.exists(absorb_dir):
+            os.makedirs(absorb_dir)        
+        if not os.path.exists(upgrade_dir):
+            os.makedirs(upgrade_dir) 
         if not os.path.exists(backup_dir):
             os.makedirs(backup_dir)        
         screenshot = sct.grab({"top": top, "left": left, "width": width, "height": height})
         if capture_mode == "exchange1":
-            save_path = save_dir1+ str(i) +".png"
-        elif capture_mode == "absorb2" or capture_mode == "absorb1":
-            save_path = save_dir2+ str(i) +".png"
-
+            save_path = exchange_dir+ str(i) +".png"
+        elif capture_mode == "absorb1" or capture_mode == "absorb2":
+            save_path = absorb_dir+ str(i) +".png"
+        elif capture_mode == "upgrade1" or capture_mode == "upgrade2":
+            save_path = upgrade_dir+ str(i) +".png"
         mss.tools.to_png(screenshot.rgb, screenshot.size, output=save_path) #Save image
         # mss.tools.to_png(screenshot.rgb, screenshot.size, output=backup_dir + str(i) + ".png") #save image for debug 
         i=i+1
+
+def capture_upgrade(end_pos):
+    capture_yxp_window("upgrade1", end_pos)
+    timer = threading.Timer(0.5, lambda: capture_yxp_window("upgrade2", end_pos))
+    timer.start()
 
 
 

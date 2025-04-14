@@ -1,7 +1,17 @@
 from paddleocr import PaddleOCR, draw_ocr
+from PIL import Image
+import os
 
-def Card_Name_OCR(img_path):
-    # img_path="C:/Users/TeraEnemy/Pictures/absorb/11.png"
+
+
+# img = Image.open(img_path)
+
+# # 获取宽度和高度
+# width, height = img.size
+
+# print(f"图片高度是: {height}")
+
+def Upgrade_OCR(img_path):
     ocr = PaddleOCR(use_angle_cls=True, lang="ch")  # need to run only once to download and load model into memory
     card_name=[]
     result = ocr.ocr(img_path, cls=True)
@@ -11,11 +21,12 @@ def Card_Name_OCR(img_path):
             for line in res:
                 EdgeRatio=((float(line[0][1][0])-float(line[0][0][0]))**2+(float(line[0][1][1])-float(line[0][0][1]))**2)**0.5/((float(line[0][1][0])-float(line[0][2][0]))**2+(float(line[0][1][1])-float(line[0][2][1]))**2)**0.5
                 BoxAngle=(float(line[0][1][0])-float(line[0][2][0]))/(float(line[0][1][1])-float(line[0][2][1]))
-                if EdgeRatio<0.6 and abs(BoxAngle)<=0.1:
+                height = float(line[0][1][0])-float(line[0][0][0])
+                if EdgeRatio>2.2 and abs(BoxAngle)<=0.1:
+                    print(EdgeRatio, BoxAngle)
                     card_name.append(line[1][0])
-    # print(result)
     if card_name != []:
-        print(result)
+        # print(result)
         return card_name[0]
     else:
         return "recognize failed"
@@ -31,4 +42,4 @@ def Card_Name_OCR(img_path):
 #     im_show = Image.fromarray(im_show)
 #     im_show.save('C:/Users/TeraEnemy/Desktop/RESULT.png')
 
-# print(Card_Name_OCR("C:/Users/TeraEnemy/Pictures/absorb/12.png"))
+# print(Upgrade_OCR(os.path.join(os.environ['USERPROFILE'], 'Pictures/YiXianMemo/upgrade/1.png')))
