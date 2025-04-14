@@ -72,6 +72,7 @@ def process_images_and_delete(folder_path):
                 shutil.copy(file_path, backup_dir + str(m) + ocr_result + ".png")
                 os.remove(file_path)
                 continue # 将结果放入队列中
+        m += 1
     if result:
         return result
 

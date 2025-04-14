@@ -19,8 +19,8 @@ def capture_yxp_window(capture_mode, end_pos):
     width, height = right - left, bottom - top
     if capture_mode == "exchange1" or capture_mode == "absorb2" or capture_mode == "upgrade1":
         left = int(-0.05 * width + end_pos[0])
-        top = int(-0.16 * height + end_pos[1])
-        width, height = int(0.03 * width), int(0.17 * height)
+        top = int(-0.15 * height + end_pos[1])
+        width, height = int(0.03 * width), int(0.16 * height)
     elif capture_mode == "absorb1":
         left = int(-0.11*width + end_pos[0])
         top = int(0.65 * height + top)
