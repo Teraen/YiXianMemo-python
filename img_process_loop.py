@@ -8,6 +8,7 @@ import time
 import os
 
 upgraded_card = ""
+m = 0
 n = 0
 pictures_path = os.path.join(os.environ['USERPROFILE'], 'Pictures/YiXianMemo')
 backup_dir = pictures_path + "/backup/"
@@ -46,6 +47,7 @@ def img_process_loop(queue_exchange, queue_absorb):
 
 
 def process_images_and_delete(folder_path):
+    global m
     # 支持的图片扩展名列表
     image_extensions = ['.jpg', '.jpeg', '.png', '.bmp', '.gif', '.tiff']
     result = []
@@ -63,11 +65,11 @@ def process_images_and_delete(folder_path):
                 result.append(ocr_result)
                 send_data(ocr_result)
                 # OCR成功后删除图片
-                shutil.copy(file_path, backup_dir + ocr_result + ".png")
+                shutil.copy(file_path, backup_dir + str(m) + ocr_result + ".png")
                 os.remove(file_path)
                 
             except Exception as e:
-                shutil.copy(file_path, backup_dir + ocr_result + ".png")
+                shutil.copy(file_path, backup_dir + str(m) + ocr_result + ".png")
                 os.remove(file_path)
                 continue # 将结果放入队列中
     if result:
@@ -86,15 +88,16 @@ def process_upgrade_and_delete(folder_path):
             if n%2 == 0:
                 upgraded_card = Card_Name_OCR(file_path)
                 upgraded_card = remove_digits(upgraded_card)
+                shutil.copy(file_path, backup_dir + "up_" + str(n) + "_" + upgraded_card + ".png")
                 os.remove(file_path)
             else:
                 is_upgrated = Upgrade_OCR(file_path)
                 if "升级" in is_upgrated or "grade" in is_upgrated:
                     result.append(upgraded_card)
-                    shutil.copy(file_path, backup_dir + upgraded_card + ".png")
+                shutil.copy(file_path, backup_dir + "up_" + str(n) + "_" + is_upgrated + ".png")
                 os.remove(file_path)
         n += 1
-    if result:
+    if result!=[]:
         return result
 
 def remove_digits(text):

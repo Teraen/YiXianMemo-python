@@ -18,17 +18,17 @@ def capture_yxp_window(capture_mode, end_pos):
     left, top, right, bottom = win32gui.GetWindowRect(hwnd)
     width, height = right - left, bottom - top
     if capture_mode == "exchange1" or capture_mode == "absorb2" or capture_mode == "upgrade1":
-        left = int(-0.055 * width + end_pos[0])
+        left = int(-0.05 * width + end_pos[0])
         top = int(-0.16 * height + end_pos[1])
-        width, height = int(0.11 * width), int(0.32 * height)
+        width, height = int(0.03 * width), int(0.17 * height)
     elif capture_mode == "absorb1":
         left = int(-0.11*width + end_pos[0])
         top = int(0.65 * height + top)
         width, height = int(0.13 * width), int(0.17 * height)
     elif capture_mode == "upgrade2":
-        left = int(-0.065 * width + end_pos[0])
-        top = int(-0.07 * height + end_pos[1])
-        width, height = int(0.13 * width), int(0.10 * height)
+        left = int(-0.06 * width + end_pos[0])
+        top = int(-0.075 * height + end_pos[1])
+        width, height = int(0.14 * width), int(0.10 * height)
 
     with mss.mss() as sct:
         exchange_dir = pictures_path + "/exchange/"
@@ -56,8 +56,9 @@ def capture_yxp_window(capture_mode, end_pos):
 
 def capture_upgrade(end_pos):
     capture_yxp_window("upgrade1", end_pos)
-    timer = threading.Timer(0.5, lambda: capture_yxp_window("upgrade2", end_pos))
+    timer = threading.Timer(0.15, lambda: capture_yxp_window("upgrade2", end_pos))
     timer.start()
+
 
 
 
