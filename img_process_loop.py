@@ -2,7 +2,6 @@ from OCR_xcg import Card_Name_OCR
 from OCR_upgrade import Upgrade_OCR
 from send_data import send_data
 import shutil
-
 import re
 import time
 import os
@@ -10,7 +9,9 @@ import os
 upgraded_card = ""
 m = 0
 n = 0
-pictures_path = os.path.join(os.environ['USERPROFILE'], 'Pictures/YiXianMemo')
+# pictures_path = os.path.join(os.environ['USERPROFILE'], 'Pictures/YiXianMemo')
+dir_path = os.path.dirname(os.path.abspath(__file__))
+pictures_path = os.path.join(dir_path, 'Pictures')
 backup_dir = pictures_path + "/backup/"
 if os.path.exists(backup_dir):
     shutil.rmtree(backup_dir)
@@ -65,7 +66,10 @@ def process_images_and_delete(folder_path):
                 result.append(ocr_result)
                 send_data(ocr_result)
                 # OCR成功后删除图片
-                shutil.copy(file_path, backup_dir + str(m) + ocr_result + ".png")
+                if ocr_result == "recognize failed":
+                    shutil.copy(file_path, backup_dir + str(m) + ocr_result + ".png")
+                else:
+                    shutil.copy(file_path, backup_dir + ocr_result + ".png")
                 os.remove(file_path)
                 
             except Exception as e:
