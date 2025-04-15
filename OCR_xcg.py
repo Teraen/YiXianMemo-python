@@ -15,7 +15,6 @@ def Card_Name_OCR(img_path):
                     card_name.append(line[1][0])
     # print(result)
     if card_name != []:
-        print(result)
         return card_name[0]
     else:
         return "recognize failed"
@@ -31,4 +30,4 @@ def Card_Name_OCR(img_path):
 #     im_show = Image.fromarray(im_show)
 #     im_show.save('C:/Users/TeraEnemy/Desktop/RESULT.png')
 
-# print(Card_Name_OCR("C:/Users/TeraEnemy/Pictures/absorb/12.png"))
+# print(Card_Name_OCR("C:/Users/TeraEnemy/Pictures/YiXianMemo/backup/up_22_recognize failed.png"))

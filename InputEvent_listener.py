@@ -8,7 +8,7 @@ class DragDetector:
     def __init__(self):
         self.dragging = False  # 是否正在拖动
         self.start_pos = None  # 记录起始位置
-        self.threshold = 50    # 设定触发拖动的最小移动距离（像素）
+        self.threshold = 15    # 设定触发拖动的最小移动距离（像素）
         self.window_rect = self.get_game_window()  # 获取游戏窗口坐标
 
     def get_game_window(self):
