@@ -1,9 +1,9 @@
 from paddleocr import PaddleOCR, draw_ocr
 
-def Card_Name_OCR(img_path):
-    # img_path="C:/Users/TeraEnemy/Pictures/absorb/11.png"
+def card_name_OCR(img_path):
     ocr = PaddleOCR(use_angle_cls=True, lang="ch")  # need to run only once to download and load model into memory
-    card_name=[]
+    card_list = []
+    full_list = []
     result = ocr.ocr(img_path, cls=True)
     for idx in range(len(result)):
         res = result[idx]
@@ -11,13 +11,30 @@ def Card_Name_OCR(img_path):
             for line in res:
                 EdgeRatio=((float(line[0][1][0])-float(line[0][0][0]))**2+(float(line[0][1][1])-float(line[0][0][1]))**2)**0.5/((float(line[0][1][0])-float(line[0][2][0]))**2+(float(line[0][1][1])-float(line[0][2][1]))**2)**0.5
                 BoxAngle=(float(line[0][1][0])-float(line[0][2][0]))/(float(line[0][1][1])-float(line[0][2][1]))
+                HoriPos = float(line[0][0][0])
+                VertPos = float(line[0][0][1])
+                full_list.append([line[1][0], EdgeRatio, HoriPos, VertPos])
                 if EdgeRatio<0.6 and abs(BoxAngle)<=0.1:
-                    card_name.append(line[1][0])
-    # print(result)
-    if card_name != []:
-        return card_name[0]
-    else:
-        return "recognize failed"
+                    card_list.append([line[1][0], EdgeRatio, HoriPos, VertPos])
+    print(result)
+
+    if card_list == [] and len(result[0]) == 2:
+        if abs(full_list[0][2] - full_list[1][2]) < 3 and abs(full_list[0][3] - full_list[1][3]) < 30:
+            cardname = str(full_list[0][0]) + str(full_list[1][0])
+            return cardname
+        else:
+            return "NotFound"
+    elif len(card_list) == 1:
+        return card_list[0][0]
+    elif len(card_list) > 1:
+        rightside_card = ""
+        rightside_card_pos = 0
+        for  idx in range(len(card_list)):
+            if card_list[idx][2] > rightside_card_pos:
+                rightside_card_pos = card_list[idx][2]
+                rightside_card = card_list[idx][0]
+        return rightside_card
+        
 # # 显示结果
 # from PIL import Image
 # if res:
@@ -30,4 +47,4 @@ def Card_Name_OCR(img_path):
 #     im_show = Image.fromarray(im_show)
 #     im_show.save('C:/Users/TeraEnemy/Desktop/RESULT.png')
 
-# print(Card_Name_OCR("C:/Users/TeraEnemy/Pictures/YiXianMemo/backup/up_22_recognize failed.png"))
+print(card_name_OCR("C:/YiXianMemo/PyFiles/Pictures/backup/up_24_recognize failed.png"))
