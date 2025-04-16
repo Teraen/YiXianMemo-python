@@ -28,7 +28,7 @@ def capture_yxp_window(capture_mode, end_pos):
         top = int(0.65 * height + top)
         width, height = int(0.13 * width), int(0.17 * height)
     elif capture_mode == "upgrade2":
-        left = int(-0.06 * width + end_pos[0])
+        left = int(-0.07 * width + end_pos[0])
         top = int(-0.075 * height + end_pos[1])
         width, height = int(0.14 * width), int(0.10 * height)
 

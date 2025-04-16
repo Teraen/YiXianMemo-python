@@ -38,4 +38,4 @@ def Upgrade_OCR(img_path):
         return "recognize failed"
 
 
-# print(Upgrade_OCR(os.path.join(os.environ['USERPROFILE'], 'Pictures/YiXianMemo/backup/up_1_每加过3体魄多.png')))
+# print(Upgrade_OCR("C:/YiXianMemo/PyFiles/Pictures/backup/up_5_recognize failed.png"))

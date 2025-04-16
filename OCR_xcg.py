@@ -16,7 +16,7 @@ def Card_Name_OCR(img_path):
                 full_list.append([line[1][0], EdgeRatio, HoriPos, VertPos])
                 if EdgeRatio<0.6 and abs(BoxAngle)<=0.1:
                     card_list.append([line[1][0], EdgeRatio, HoriPos, VertPos])
-    print(result)
+    # print(result)
     if result == [None]:
         return "NotFound"
     elif card_list == [] and len(result[0]) == 2:
@@ -37,8 +37,9 @@ def Card_Name_OCR(img_path):
                 rightside_card_pos = card_list[idx][2]
                 rightside_card = card_list[idx][0]
         if rightside_card != "":
-            print(rightside_card)
             return rightside_card
+    else:
+        return "NotFound"
         
 # # 显示结果
 # from PIL import Image
@@ -52,4 +53,4 @@ def Card_Name_OCR(img_path):
 #     im_show = Image.fromarray(im_show)
 #     im_show.save('C:/Users/TeraEnemy/Desktop/RESULT.png')
 
-# print(Card_Name_OCR("C:/YiXianMemo/PyFiles/Pictures/backup/up_24_recognize failed.png"))
+# print(Card_Name_OCR("C:/YiXianMemo/PyFiles/Pictures/backup/up_12_NotFound.png"))
