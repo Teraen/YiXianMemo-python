@@ -2,11 +2,10 @@ from OCR_xcg import Card_Name_OCR
 from OCR_upgrade import Upgrade_OCR
 from send_data import send_data
 import shutil
-import re
 import time
 import os
 
-upgraded_card = ""
+upgraded_card = "None"
 m = 0
 n = 0
 # pictures_path = os.path.join(os.environ['USERPROFILE'], 'Pictures/YiXianMemo')
@@ -62,7 +61,6 @@ def process_images_and_delete(folder_path):
             try:
                 # 调用OCR模块识别图片
                 ocr_result = Card_Name_OCR(file_path)
-                ocr_result = remove_digits(ocr_result)
                 result.append(ocr_result)
                 send_data(ocr_result)
                 # OCR成功后删除图片
@@ -92,7 +90,8 @@ def process_upgrade_and_delete(folder_path):
         if os.path.isfile(file_path) and file_ext in image_extensions:
             if n%2 == 0:
                 upgraded_card = Card_Name_OCR(file_path)
-                upgraded_card = remove_digits(upgraded_card)
+                if upgraded_card == None:
+                    upgraded_card = "None"
                 shutil.copy(file_path, backup_dir + "up_" + str(n) + "_" + upgraded_card + ".png")
                 os.remove(file_path)
             else:
@@ -101,9 +100,8 @@ def process_upgrade_and_delete(folder_path):
                     result.append(upgraded_card)
                 shutil.copy(file_path, backup_dir + "up_" + str(n) + "_" + is_upgrated + ".png")
                 os.remove(file_path)
+                upgraded_card = "None"
         n += 1
     if result!=[]:
         return result
 
-def remove_digits(text):
-    return re.sub(r'\d+', '', text)
