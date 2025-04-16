@@ -1,6 +1,6 @@
 from paddleocr import PaddleOCR, draw_ocr
 
-def card_name_OCR(img_path):
+def Card_Name_OCR(img_path):
     ocr = PaddleOCR(use_angle_cls=True, lang="ch")  # need to run only once to download and load model into memory
     card_list = []
     full_list = []
@@ -16,7 +16,7 @@ def card_name_OCR(img_path):
                 full_list.append([line[1][0], EdgeRatio, HoriPos, VertPos])
                 if EdgeRatio<0.6 and abs(BoxAngle)<=0.1:
                     card_list.append([line[1][0], EdgeRatio, HoriPos, VertPos])
-    print(result)
+    # print(result)
 
     if card_list == [] and len(result[0]) == 2:
         if abs(full_list[0][2] - full_list[1][2]) < 3 and abs(full_list[0][3] - full_list[1][3]) < 30:
@@ -47,4 +47,4 @@ def card_name_OCR(img_path):
 #     im_show = Image.fromarray(im_show)
 #     im_show.save('C:/Users/TeraEnemy/Desktop/RESULT.png')
 
-print(card_name_OCR("C:/YiXianMemo/PyFiles/Pictures/backup/up_24_recognize failed.png"))
+# print(Card_Name_OCR("C:/YiXianMemo/PyFiles/Pictures/backup/up_24_recognize failed.png"))
