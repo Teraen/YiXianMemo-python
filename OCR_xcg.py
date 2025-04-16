@@ -16,24 +16,29 @@ def Card_Name_OCR(img_path):
                 full_list.append([line[1][0], EdgeRatio, HoriPos, VertPos])
                 if EdgeRatio<0.6 and abs(BoxAngle)<=0.1:
                     card_list.append([line[1][0], EdgeRatio, HoriPos, VertPos])
-    # print(result)
-
-    if card_list == [] and len(result[0]) == 2:
+    print(result)
+    if result == [None]:
+        return "NotFound"
+    elif card_list == [] and len(result[0]) == 2:
         if abs(full_list[0][2] - full_list[1][2]) < 3 and abs(full_list[0][3] - full_list[1][3]) < 30:
             cardname = str(full_list[0][0]) + str(full_list[1][0])
-            return cardname
+            if cardname != "":
+                return cardname
         else:
             return "NotFound"
     elif len(card_list) == 1:
-        return card_list[0][0]
+        if card_list[0][0] != "":
+            return card_list[0][0]
     elif len(card_list) > 1:
-        rightside_card = ""
+        rightside_card = "NotFound"
         rightside_card_pos = 0
         for  idx in range(len(card_list)):
             if card_list[idx][2] > rightside_card_pos:
                 rightside_card_pos = card_list[idx][2]
                 rightside_card = card_list[idx][0]
-        return rightside_card
+        if rightside_card != "":
+            print(rightside_card)
+            return rightside_card
         
 # # 显示结果
 # from PIL import Image
