@@ -1,7 +1,6 @@
 import win32gui
 import mss
 import os
-import time
 import threading
 i=0
 # pictures_path = os.path.join(os.environ['USERPROFILE'], 'Pictures/YiXianMemo')

@@ -1,5 +1,4 @@
 import pygetwindow as gw
-import time
 from pynput import mouse
 from Capture_xcg import capture_yxp_window, capture_upgrade
 
