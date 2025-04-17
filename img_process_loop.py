@@ -64,7 +64,7 @@ def process_images_and_delete(folder_path):
                 result.append(ocr_result)
                 send_data(ocr_result)
                 # OCR成功后删除图片
-                if ocr_result == "recognize failed":
+                if ocr_result == "NotFound":
                     shutil.copy(file_path, backup_dir + str(m) + ocr_result + ".png")
                 else:
                     shutil.copy(file_path, backup_dir + ocr_result + ".png")
@@ -97,6 +97,7 @@ def process_upgrade_and_delete(folder_path):
             else:
                 is_upgrated = Upgrade_OCR(file_path)
                 if "升级" in is_upgrated or "grade" in is_upgrated:
+                    send_data(upgraded_card)
                     result.append(upgraded_card)
                 shutil.copy(file_path, backup_dir + "up_" + str(n) + "_" + is_upgrated + ".png")
                 os.remove(file_path)

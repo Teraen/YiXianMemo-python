@@ -1,5 +1,4 @@
 from paddleocr import PaddleOCR, draw_ocr
-from PIL import Image
 import os
 
 # img = Image.open(img_path)
@@ -35,7 +34,7 @@ def Upgrade_OCR(img_path):
     if card_name != []:
         return card_name[0]
     else:
-        return "recognize failed"
+        return "NotFound"
 
 
 # print(Upgrade_OCR("C:/YiXianMemo/PyFiles/Pictures/backup/up_5_recognize failed.png"))
