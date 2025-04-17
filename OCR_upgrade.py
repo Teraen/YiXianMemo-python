@@ -37,4 +37,4 @@ def Upgrade_OCR(img_path):
         return "NotFound"
 
 
-# print(Upgrade_OCR("C:/YiXianMemo/PyFiles/Pictures/backup/up_5_recognize failed.png"))
+# print(Upgrade_OCR("C:/YiXianMemo/PyFiles/Pictures/backup/up_8_NotFound.png"))
