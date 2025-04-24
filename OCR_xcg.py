@@ -13,10 +13,23 @@ def Card_Name_OCR(img_path):
                 BoxAngle=(float(line[0][1][0])-float(line[0][2][0]))/(float(line[0][1][1])-float(line[0][2][1]))
                 HoriPos = float(line[0][0][0])
                 VertPos = float(line[0][0][1])
+                # print(EdgeRatio)
                 full_list.append([line[1][0], EdgeRatio, HoriPos, VertPos])
-                if EdgeRatio<0.6 and abs(BoxAngle)<=0.1:
+                if EdgeRatio<0.5 and abs(BoxAngle)<=0.1:
                     card_list.append([line[1][0], EdgeRatio, HoriPos, VertPos])
     # print(result)
+    # # 显示结果
+    # from PIL import Image
+    # if res:
+    #     result = result[0]
+    #     image = Image.open(img_path).convert('RGB')
+    #     boxes = [line[0] for line in result]
+    #     txts = [line[1][0] for line in result]
+    #     scores = [line[1][1] for line in result]
+    #     im_show = draw_ocr(image, boxes, txts, scores, font_path='./fonts/simfang.ttf')
+    #     im_show = Image.fromarray(im_show)
+    #     im_show.save('C:/Users/TeraEnemy/Desktop/RESULT.png')
+
     if result == [None]:
         return "NotFound"
     elif card_list == [] and len(result[0]) == 2:
@@ -40,17 +53,5 @@ def Card_Name_OCR(img_path):
             return rightside_card
     else:
         return "NotFound"
-        
-# # 显示结果
-# from PIL import Image
-# if res:
-#     result = result[0]
-#     image = Image.open(img_path).convert('RGB')
-#     boxes = [line[0] for line in result]
-#     txts = [line[1][0] for line in result]
-#     scores = [line[1][1] for line in result]
-#     im_show = draw_ocr(image, boxes, txts, scores, font_path='./fonts/simfang.ttf')
-#     im_show = Image.fromarray(im_show)
-#     im_show.save('C:/Users/TeraEnemy/Desktop/RESULT.png')
 
-# print(Card_Name_OCR("C:/YiXianMemo/PyFiles/Pictures/backup/up_12_NotFound.png"))
+# print(Card_Name_OCR("C:/YiXianMemo/PyFiles/Pictures/backup/up_2_NotFound.png"))
