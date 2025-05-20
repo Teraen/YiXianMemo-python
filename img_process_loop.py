@@ -25,11 +25,15 @@ if not os.path.exists(rec_dir):
     os.makedirs(rec_dir)
 if not os.path.exists(cls_dir):
     os.makedirs(cls_dir)
+
 ocr = PaddleOCR(
     use_angle_cls=True, 
     det_model_dir=det_dir, 
     rec_model_dir=rec_dir, 
     cls_model_dir=cls_dir, 
+    use_doc_orientation_classify=False, 
+    use_doc_unwarping=False, 
+    use_textline_orientation=False, 
     lang="ch"
 )  # need to run only once to download and load model into memory
 
