@@ -5,8 +5,6 @@
 !img_process_loop.py
 !server.py
 !InputEvent_listener.py
-!OCR_xcg.py
-!OCR_upgrade.py
 !Main.py
 !send_data.py
 !.gitignore
