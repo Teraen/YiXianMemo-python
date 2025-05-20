@@ -16,12 +16,20 @@ if os.path.exists(backup_dir):
     os.makedirs(backup_dir)
 else:
     os.makedirs(backup_dir)
-
+det_dir=os.path.join(dir_path, 'Models/det')
+rec_dir=os.path.join(dir_path, 'Models/rec')
+cls_dir=os.path.join(dir_path, 'Models/cls')
+if not os.path.exists(det_dir):
+    os.makedirs(det_dir)
+if not os.path.exists(rec_dir):
+    os.makedirs(rec_dir)
+if not os.path.exists(cls_dir):
+    os.makedirs(cls_dir)
 ocr = PaddleOCR(
     use_angle_cls=True, 
-    det_model_dir=os.path.join(dir_path, 'Models/det'), 
-    rec_model_dir=os.path.join(dir_path, 'Models/rec'), 
-    cls_model_dir=os.path.join(dir_path, 'Models/cls'), 
+    det_model_dir=det_dir, 
+    rec_model_dir=rec_dir, 
+    cls_model_dir=cls_dir, 
     lang="ch"
 )  # need to run only once to download and load model into memory
 
