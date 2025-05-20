@@ -1,9 +1,8 @@
-from OCR_xcg import Card_Name_OCR
-from OCR_upgrade import Upgrade_OCR
 from send_data import send_data
 import shutil
 import time
 import os
+from paddleocr import PaddleOCR 
 
 upgraded_card = "None"
 m = 0
@@ -17,6 +16,14 @@ if os.path.exists(backup_dir):
     os.makedirs(backup_dir)
 else:
     os.makedirs(backup_dir)
+
+ocr = PaddleOCR(
+    use_angle_cls=True, 
+    det_model_dir=os.path.join(dir_path, 'Models/det'), 
+    rec_model_dir=os.path.join(dir_path, 'Models/rec'), 
+    cls_model_dir=os.path.join(dir_path, 'Models/cls'), 
+    lang="ch"
+)  # need to run only once to download and load model into memory
 
 def img_process_loop(queue_exchange, queue_absorb):
     exchange_dir = pictures_path + "/exchange/"
@@ -106,3 +113,90 @@ def process_upgrade_and_delete(folder_path):
     if result!=[]:
         return result
 
+def Upgrade_OCR(img_path):
+    card_name=[]
+    result = ocr.ocr(img_path, cls=True)
+    # print(result)
+    for idx in range(len(result)):
+        res = result[idx]
+        if res:
+            for line in res:
+                EdgeRatio=((float(line[0][1][0])-float(line[0][0][0]))**2+(float(line[0][1][1])-float(line[0][0][1]))**2)**0.5/((float(line[0][1][0])-float(line[0][2][0]))**2+(float(line[0][1][1])-float(line[0][2][1]))**2)**0.5
+                BoxAngle=(float(line[0][1][0])-float(line[0][2][0]))/(float(line[0][1][1])-float(line[0][2][1]))
+                height = float(line[0][1][0])-float(line[0][0][0])
+                if EdgeRatio>1.8 and abs(BoxAngle)<=0.1:
+                    # print(EdgeRatio, BoxAngle)
+                    card_name.append(line[1][0])
+    # # 显示结果
+    # if res:
+    #     result = result[0]
+    #     image = Image.open(img_path).convert('RGB')
+    #     boxes = [line[0] for line in result]
+    #     txts = [line[1][0] for line in result]
+    #     scores = [line[1][1] for line in result]
+    #     im_show = draw_ocr(image, boxes, txts, scores, font_path='./fonts/simfang.ttf')
+    #     im_show = Image.fromarray(im_show)
+    #     im_show.save('C:/Users/TeraEnemy/Desktop/RESULT.png')
+    if card_name != []:
+        return card_name[0]
+    else:
+        return "NotFound"
+
+
+# print(Upgrade_OCR("C:/YiXianMemo/PyFiles/Pictures/backup/up_8_NotFound.png"))
+
+def Card_Name_OCR(img_path):
+    card_list = []
+    full_list = []
+    result = ocr.ocr(img_path, cls=True)
+    for idx in range(len(result)):
+        res = result[idx]
+        if res:
+            for line in res:
+                EdgeRatio=((float(line[0][1][0])-float(line[0][0][0]))**2+(float(line[0][1][1])-float(line[0][0][1]))**2)**0.5/((float(line[0][1][0])-float(line[0][2][0]))**2+(float(line[0][1][1])-float(line[0][2][1]))**2)**0.5
+                BoxAngle=(float(line[0][1][0])-float(line[0][2][0]))/(float(line[0][1][1])-float(line[0][2][1]))
+                HoriPos = float(line[0][0][0])
+                VertPos = float(line[0][0][1])
+                # print(EdgeRatio)
+                full_list.append([line[1][0], EdgeRatio, HoriPos, VertPos])
+                if EdgeRatio<0.6 and abs(BoxAngle)<=0.1:
+                    card_list.append([line[1][0], EdgeRatio, HoriPos, VertPos])
+    # print(result)
+    # print(card_list)
+    # # 显示结果
+    # from PIL import Image
+    # if res:
+    #     result = result[0]
+    #     image = Image.open(img_path).convert('RGB')
+    #     boxes = [line[0] for line in result]
+    #     txts = [line[1][0] for line in result]
+    #     scores = [line[1][1] for line in result]
+    #     im_show = draw_ocr(image, boxes, txts, scores, font_path='./fonts/simfang.ttf')
+    #     im_show = Image.fromarray(im_show)
+    #     im_show.save('C:/Users/TeraEnemy/Desktop/RESULT.png')
+
+    if result == [None]:
+        return "NotFound"
+    elif card_list == [] and len(result[0]) == 2:
+        if abs(full_list[0][2] - full_list[1][2]) < 3 and abs(full_list[0][3] - full_list[1][3]) < 30:
+            cardname = str(full_list[0][0]) + str(full_list[1][0])
+            if cardname != "":
+                return cardname
+        else:
+            return "NotFound"
+    elif len(card_list) == 1:
+        if card_list[0][0] != "":
+            return card_list[0][0]
+    elif len(card_list) > 1:
+        rightside_card = "NotFound"
+        rightside_card_pos = 0
+        for  idx in range(len(card_list)):
+            if card_list[idx][2] > rightside_card_pos:
+                rightside_card_pos = card_list[idx][2]
+                rightside_card = card_list[idx][0]
+        if rightside_card != "":
+            return rightside_card
+    else:
+        return "NotFound"
+
+# print(Card_Name_OCR("C:/YiXianMemo/PyFiles/Pictures/backup/up_24_巽卦.png"))
