@@ -185,7 +185,7 @@ def Card_Name_OCR(img_path):
     print(0.04 * height)
     hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
 
-    lower = np.array([0, 0, 100])
+    lower = np.array([0, 0, 0])
     upper = np.array([0, 0, 255])
 
     mask = cv2.inRange(hsv, lower, upper)
@@ -219,7 +219,7 @@ def Card_Name_OCR(img_path):
         elif len(single_list) > 0:
             offset = ((plural_list[0][3] + plural_list[0][5]) / 2 - height / 2) / height
             print("offset:", offset)
-            if offset > -0.07 and offset < 0.07:
+            if offset > -0.08 and offset < 0.08:
                 return extract_chinese(plural_list[0][0])
             else:
                 for idx in range(len(single_list)):
@@ -241,7 +241,7 @@ def Card_Name_OCR(img_path):
             index = 1
         offset = ((plural_list[index][3] + plural_list[index][5]) / 2 - height / 2) / height
         print("offset:", offset)
-        if offset > -0.07 and offset < 0.07:
+        if offset > -0.08 and offset < 0.08:
             return extract_chinese(plural_list[index][0])
         elif len(single_list) == 0:
             return extract_chinese(plural_list[index][0])
