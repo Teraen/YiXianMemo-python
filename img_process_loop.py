@@ -23,22 +23,39 @@ if not os.path.exists(rec_dir):
     os.makedirs(rec_dir)
 if not os.path.exists(ori_dir):
     os.makedirs(ori_dir)
+try:
+    ocr = PaddleOCR(
+        use_doc_orientation_classify=False, 
+        use_doc_unwarping=False, 
+        use_textline_orientation=False,
+        text_detection_model_dir=det_dir,
+        # text_detection_model_name='PP-OCRv5_server_det',
+        text_detection_model_name='PP-OCRv5_mobile_det',
+        text_line_orientation_model_dir=ori_dir,
+        text_recognition_model_dir=rec_dir,
+        text_rec_score_thresh=0.7,
+        text_det_box_thresh=0.3,
+        text_det_thresh=0.3,
+        text_det_unclip_ratio=1.2,
+        device='CPU',
+    ) 
+except:
+    ocr = PaddleOCR(
+        use_doc_orientation_classify=False, 
+        use_doc_unwarping=False, 
+        use_textline_orientation=False,
+        text_detection_model_dir=det_dir,
+        text_detection_model_name='PP-OCRv5_server_det',
+        # text_detection_model_name='PP-OCRv5_mobile_det',
+        text_line_orientation_model_dir=ori_dir,
+        text_recognition_model_dir=rec_dir,
+        text_rec_score_thresh=0.7,
+        text_det_box_thresh=0.3,
+        text_det_thresh=0.3,
+        text_det_unclip_ratio=1.2,
+        device='CPU',
+    ) 
 
-ocr = PaddleOCR(
-    use_doc_orientation_classify=False, 
-    use_doc_unwarping=False, 
-    use_textline_orientation=False,
-    text_detection_model_dir=det_dir,
-    text_detection_model_name='PP-OCRv5_server_det',
-    # text_detection_model_name='PP-OCRv5_mobile_det',
-    text_line_orientation_model_dir=ori_dir,
-    text_recognition_model_dir=rec_dir,
-    text_rec_score_thresh=0.7,
-    text_det_box_thresh=0.3,
-    text_det_thresh=0.3,
-    text_det_unclip_ratio=1.2,
-    device='CPU',
-)  # need to run only once to download and load model into memory
 
 def img_process_loop(queue_exchange, queue_absorb):
     exchange_dir = pictures_path + "/exchange/"
