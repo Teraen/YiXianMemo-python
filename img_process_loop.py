@@ -2,7 +2,10 @@ from send_data import send_data
 import shutil
 import time
 import os
-from paddleocr import PaddleOCR 
+from paddleocr import PaddleOCR
+import cv2
+import numpy as np
+import re
 
 upgraded_card = "None"
 m = 0
@@ -11,30 +14,30 @@ n = 0
 dir_path = os.path.dirname(os.path.abspath(__file__))
 pictures_path = os.path.join(dir_path, 'Pictures')
 backup_dir = pictures_path + "/backup/"
-if os.path.exists(backup_dir):
-    shutil.rmtree(backup_dir)
-    os.makedirs(backup_dir)
-else:
-    os.makedirs(backup_dir)
 det_dir=os.path.join(dir_path, 'Models/det')
 rec_dir=os.path.join(dir_path, 'Models/rec')
-cls_dir=os.path.join(dir_path, 'Models/cls')
+ori_dir=os.path.join(dir_path, 'Models/ori')
 if not os.path.exists(det_dir):
     os.makedirs(det_dir)
 if not os.path.exists(rec_dir):
     os.makedirs(rec_dir)
-if not os.path.exists(cls_dir):
-    os.makedirs(cls_dir)
+if not os.path.exists(ori_dir):
+    os.makedirs(ori_dir)
 
 ocr = PaddleOCR(
-    use_angle_cls=True, 
-    det_model_dir=det_dir, 
-    rec_model_dir=rec_dir, 
-    cls_model_dir=cls_dir, 
     use_doc_orientation_classify=False, 
     use_doc_unwarping=False, 
-    use_textline_orientation=False, 
-    lang="ch"
+    use_textline_orientation=False,
+    text_detection_model_dir=det_dir,
+    text_detection_model_name='PP-OCRv5_server_det',
+    # text_detection_model_name='PP-OCRv5_mobile_det',
+    text_line_orientation_model_dir=ori_dir,
+    text_recognition_model_dir=rec_dir,
+    text_rec_score_thresh=0.7,
+    text_det_box_thresh=0.3,
+    text_det_thresh=0.3,
+    text_det_unclip_ratio=1.2,
+    device='CPU',
 )  # need to run only once to download and load model into memory
 
 def img_process_loop(queue_exchange, queue_absorb):
@@ -77,6 +80,7 @@ def process_images_and_delete(folder_path):
         
         # 检查是否为图片文件
         if os.path.isfile(file_path) and file_ext in image_extensions:
+            ocr_result = "EXCEPT"
             try:
                 # 调用OCR模块识别图片
                 ocr_result = Card_Name_OCR(file_path)
@@ -86,11 +90,11 @@ def process_images_and_delete(folder_path):
                 if ocr_result == "NotFound":
                     shutil.copy(file_path, backup_dir + str(m) + ocr_result + ".png")
                 else:
-                    shutil.copy(file_path, backup_dir + ocr_result + ".png")
+                    shutil.copy(file_path, backup_dir + str(ocr_result) + ".png")
                 os.remove(file_path)
                 
             except Exception as e:
-                shutil.copy(file_path, backup_dir + str(m) + ocr_result + ".png")
+                shutil.copy(file_path, backup_dir + str(m) + str(ocr_result) + ".png")
                 os.remove(file_path)
                 continue # 将结果放入队列中
         m += 1
@@ -126,89 +130,134 @@ def process_upgrade_and_delete(folder_path):
         return result
 
 def Upgrade_OCR(img_path):
-    card_name=[]
-    result = ocr.ocr(img_path, cls=True)
-    # print(result)
-    for idx in range(len(result)):
-        res = result[idx]
-        if res:
-            for line in res:
-                EdgeRatio=((float(line[0][1][0])-float(line[0][0][0]))**2+(float(line[0][1][1])-float(line[0][0][1]))**2)**0.5/((float(line[0][1][0])-float(line[0][2][0]))**2+(float(line[0][1][1])-float(line[0][2][1]))**2)**0.5
-                BoxAngle=(float(line[0][1][0])-float(line[0][2][0]))/(float(line[0][1][1])-float(line[0][2][1]))
-                height = float(line[0][1][0])-float(line[0][0][0])
-                if EdgeRatio>1.8 and abs(BoxAngle)<=0.1:
-                    # print(EdgeRatio, BoxAngle)
-                    card_name.append(line[1][0])
-    # # 显示结果
-    # if res:
-    #     result = result[0]
-    #     image = Image.open(img_path).convert('RGB')
-    #     boxes = [line[0] for line in result]
-    #     txts = [line[1][0] for line in result]
-    #     scores = [line[1][1] for line in result]
-    #     im_show = draw_ocr(image, boxes, txts, scores, font_path='./fonts/simfang.ttf')
-    #     im_show = Image.fromarray(im_show)
-    #     im_show.save('C:/Users/TeraEnemy/Desktop/RESULT.png')
-    if card_name != []:
-        return card_name[0]
+    img = cv2.imread(img_path)
+    hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
+
+    # 红色范围（注意红色跨越HSV的头尾）
+    lower_red1 = np.array([0, 200, 200])
+    upper_red1 = np.array([10, 255, 255])
+    lower_red2 = np.array([170, 200, 200])
+    upper_red2 = np.array([180, 255, 255])
+
+    mask1 = cv2.inRange(hsv, lower_red1, upper_red1)
+    mask2 = cv2.inRange(hsv, lower_red2, upper_red2)
+    mask = cv2.bitwise_or(mask1, mask2)
+
+    red_pixel_count = np.sum(mask > 0)
+    total_pixel_count = mask.size
+    red_ratio = red_pixel_count / total_pixel_count
+
+    # res = cv2.bitwise_and(img, img, mask=mask)
+    # cv2.imwrite("C:/YiXianMemo/PyFiles/pictures/res_output.png", res)
+    # print("Red Ratio: ", red_ratio)
+    
+    if red_ratio>0.1:
+        return "升级"
     else:
         return "NotFound"
 
+# print(Upgrade_OCR("C:/YiXianMemo/PyFiles/Pictures/5.png"))
 
-# print(Upgrade_OCR("C:/YiXianMemo/PyFiles/Pictures/backup/up_8_NotFound.png"))
 
 def Card_Name_OCR(img_path):
-    card_list = []
-    full_list = []
-    result = ocr.ocr(img_path, cls=True)
-    for idx in range(len(result)):
-        res = result[idx]
-        if res:
-            for line in res:
-                EdgeRatio=((float(line[0][1][0])-float(line[0][0][0]))**2+(float(line[0][1][1])-float(line[0][0][1]))**2)**0.5/((float(line[0][1][0])-float(line[0][2][0]))**2+(float(line[0][1][1])-float(line[0][2][1]))**2)**0.5
-                BoxAngle=(float(line[0][1][0])-float(line[0][2][0]))/(float(line[0][1][1])-float(line[0][2][1]))
-                HoriPos = float(line[0][0][0])
-                VertPos = float(line[0][0][1])
-                # print(EdgeRatio)
-                full_list.append([line[1][0], EdgeRatio, HoriPos, VertPos])
-                if EdgeRatio<0.6 and abs(BoxAngle)<=0.1:
-                    card_list.append([line[1][0], EdgeRatio, HoriPos, VertPos])
-    # print(result)
-    # print(card_list)
-    # # 显示结果
-    # from PIL import Image
-    # if res:
-    #     result = result[0]
-    #     image = Image.open(img_path).convert('RGB')
-    #     boxes = [line[0] for line in result]
-    #     txts = [line[1][0] for line in result]
-    #     scores = [line[1][1] for line in result]
-    #     im_show = draw_ocr(image, boxes, txts, scores, font_path='./fonts/simfang.ttf')
-    #     im_show = Image.fromarray(im_show)
-    #     im_show.save('C:/Users/TeraEnemy/Desktop/RESULT.png')
+    plural_list = []
+    single_list = []
 
-    if result == [None]:
-        return "NotFound"
-    elif card_list == [] and len(result[0]) == 2:
-        if abs(full_list[0][2] - full_list[1][2]) < 3 and abs(full_list[0][3] - full_list[1][3]) < 30:
-            cardname = str(full_list[0][0]) + str(full_list[1][0])
-            if cardname != "":
-                return cardname
+    img = cv2.imread(img_path)
+    height, width, channels = img.shape
+    print(0.04 * height)
+    hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
+
+    lower = np.array([0, 0, 100])
+    upper = np.array([0, 0, 255])
+
+    mask = cv2.inRange(hsv, lower, upper)
+    res = cv2.bitwise_and(img, img, mask=mask)
+    result_list = ocr.predict(res)
+
+    texts = result_list[0]['rec_texts']
+    boxes = result_list[0]['rec_boxes']
+    for idx in range(len(texts)):
+        text = texts[idx]
+        # print(text)
+        if text:
+            EdgeRatio=float((boxes[idx][2]-boxes[idx][0])/(boxes[idx][3]-boxes[idx][1]))
+            x1 = boxes[idx][0]
+            y1 = boxes[idx][1]
+            x2 = boxes[idx][2]
+            y2 = boxes[idx][3]
+            if EdgeRatio<0.6:
+                plural_list.append([text, EdgeRatio, x1, y1, x2, y2])
+            elif EdgeRatio > 0.6 and EdgeRatio < 1.05:
+                single_list.append([text, EdgeRatio, x1, y1, x2, y2])
+
+    # print(result_list)
+    # cv2.imwrite("C:/YiXianMemo/PyFiles/pictures/backup/res_output.png", res)
+    # print(plural_list)
+    # print(single_list)
+
+    if len(plural_list) == 1:
+        if len(single_list) == 0:
+            return extract_chinese(plural_list[0][0])
+        elif len(single_list) > 0:
+            offset = ((plural_list[0][3] + plural_list[0][5]) / 2 - height / 2) / height
+            print("offset:", offset)
+            if offset > -0.07 and offset < 0.07:
+                return extract_chinese(plural_list[0][0])
+            else:
+                for idx in range(len(single_list)):
+                    if abs(single_list[idx][2] - plural_list[0][2]) < 0.04 * height:
+                        if offset < -0.07:
+                            card_name = plural_list[0][0] + single_list[idx][0]
+                        else:
+                            card_name = single_list[idx][0] + plural_list[0][0]
+                        return extract_chinese(card_name)
+                return extract_chinese(plural_list[0][0])
+            
+    elif len(plural_list) == 2:
+        if abs(plural_list[0][2]-plural_list[1][2]) < 0.04 * height:
+            card_name = plural_list[0][0] + plural_list[1][0]
+            return extract_chinese(card_name)
+        elif plural_list[0][2] > plural_list[1][2]:
+            index = 0
+        else:
+            index = 1
+        offset = ((plural_list[index][3] + plural_list[index][5]) / 2 - height / 2) / height
+        print("offset:", offset)
+        if offset > -0.07 and offset < 0.07:
+            return extract_chinese(plural_list[index][0])
+        elif len(single_list) == 0:
+            return extract_chinese(plural_list[index][0])
+        else:
+            for idx in range(len(single_list)):
+                if abs(single_list[idx][2] - plural_list[index][2]) < 0.04 * height:
+                    if offset < -0.07:
+                        card_name = plural_list[index][0] + single_list[idx][0]
+                    else:
+                        card_name = single_list[idx][0] + plural_list[index][0]
+                    return extract_chinese(card_name)
+            return extract_chinese(plural_list[index][0])
+                
+    elif len(plural_list) == 0:
+        if len(single_list) < 2:
+            return "NotFound"
+        elif len(single_list) == 2:     
+            if abs(single_list[0][2] - single_list[1][2]) < 0.04 * height:
+                cardname = str(single_list[0][0]) + str(single_list[1][0])
+                return extract_chinese(cardname)
+            else:
+                return "NotFound"
+        elif len(single_list) > 2:
+            return "NotFound"
         else:
             return "NotFound"
-    elif len(card_list) == 1:
-        if card_list[0][0] != "":
-            return card_list[0][0]
-    elif len(card_list) > 1:
-        rightside_card = "NotFound"
-        rightside_card_pos = 0
-        for  idx in range(len(card_list)):
-            if card_list[idx][2] > rightside_card_pos:
-                rightside_card_pos = card_list[idx][2]
-                rightside_card = card_list[idx][0]
-        if rightside_card != "":
-            return rightside_card
     else:
         return "NotFound"
 
-# print(Card_Name_OCR("C:/YiXianMemo/PyFiles/Pictures/backup/up_24_巽卦.png"))
+
+def extract_chinese(text):
+    # 匹配所有汉字范围（包括简体和繁体）
+    chinese_only = re.findall(r'[\u4e00-\u9fff]+', text)
+    return ''.join(chinese_only)
+
+# print(Card_Name_OCR("C:/YiXianMemo/PyFiles/Pictures/backup/0.png"))

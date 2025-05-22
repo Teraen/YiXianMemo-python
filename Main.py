@@ -2,12 +2,22 @@ from multiprocessing import Process, Queue
 from img_process_loop import img_process_loop
 from InputEvent_listener import start_drag_detector
 from Match_card import Match
+import os
+import shutil
 
 result_dict = {}
 queue_exchange = Queue(maxsize=20)
 queue_absorb = Queue(maxsize=20)
 is_running = False
 processes = []
+dir_path = os.path.dirname(os.path.abspath(__file__))
+pictures_path = os.path.join(dir_path, 'Pictures')
+backup_dir = pictures_path + "/backup/"
+if os.path.exists(backup_dir):
+    shutil.rmtree(backup_dir)
+    os.makedirs(backup_dir)
+else:
+    os.makedirs(backup_dir)
 
 def Main(runningtype):
     global processes, is_running

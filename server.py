@@ -22,18 +22,17 @@ if __name__ == "__main__":
                 send_data(Data)
             time.sleep(1)  # 降低 CPU 占用
 
-    REQUIRED_PACKAGES = ['paddlepaddle', 'paddleocr', 'pynput', 'mss', 'pygetwindow']  # 你用到的库，按需填
-
-    def install_packages():
-        for pkg in REQUIRED_PACKAGES:
-            try:
-                __import__(pkg)
-            except ImportError:
-                send_data("正在安装" + pkg + "...")
-                subprocess.check_call([python_path, "-m", "pip", "install", pkg])
-    send_data("正在校验Python依赖完整性...")
-    install_packages()
-    send_data("Python依赖校验完毕")
+    # REQUIRED_PACKAGES = ['paddlepaddle', 'paddleocr', 'pynput', 'mss', 'pygetwindow']  # 你用到的库，按需填
+    # def install_packages():
+    #     for pkg in REQUIRED_PACKAGES:
+    #         try:
+    #             __import__(pkg)
+    #         except ImportError:
+    #             send_data("正在安装" + pkg + "...")
+    #             subprocess.check_call([python_path, "-m", "pip", "install", pkg])
+    # send_data("正在校验Python依赖完整性...")
+    # install_packages()
+    # send_data("Python依赖校验完毕")
 
     from Main import Main
 

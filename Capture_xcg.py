@@ -1,5 +1,6 @@
 import win32gui
 import mss
+import mss.tools
 import os
 import threading
 i=0
@@ -28,7 +29,7 @@ def capture_yxp_window(capture_mode, end_pos):
         width, height = int(0.13 * width), int(0.17 * height)
     elif capture_mode == "upgrade2":
         left = int(-0.07 * width + end_pos[0])
-        top = int(-0.075 * height + end_pos[1])
+        top = int(-0.07 * height + end_pos[1])
         width, height = int(0.14 * width), int(0.10 * height)
 
     with mss.mss() as sct:
@@ -49,7 +50,7 @@ def capture_yxp_window(capture_mode, end_pos):
             save_path = exchange_dir+ str(i) +".png"
         elif capture_mode == "absorb1" or capture_mode == "absorb2":
             save_path = absorb_dir+ str(i) +".png"
-        elif capture_mode == "upgrade1" or capture_mode == "upgrade2":
+        else:
             save_path = upgrade_dir+ str(i) +".png"
         mss.tools.to_png(screenshot.rgb, screenshot.size, output=save_path) #Save image
         # mss.tools.to_png(screenshot.rgb, screenshot.size, output=backup_dir + str(i) + ".png") #save image for debug 
