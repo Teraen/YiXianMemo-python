@@ -61,7 +61,7 @@ class DragDetector:
                 self.start_pos = (x, y)  # 记录位置
 
             else:
-                if self.start_pos[1]>ExchArea[1]:
+                if self.start_pos is not None and self.start_pos[1]>ExchArea[1]:
                     capture_yxp_window("absorb1",self.start_pos)
 
 

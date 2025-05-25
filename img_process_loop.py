@@ -182,7 +182,7 @@ def Card_Name_OCR(img_path):
 
     img = cv2.imread(img_path)
     height, width, channels = img.shape
-    print(0.04 * height)
+    # print(0.04 * height)
     hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
 
     lower = np.array([0, 0, 0])
@@ -203,15 +203,15 @@ def Card_Name_OCR(img_path):
             y1 = boxes[idx][1]
             x2 = boxes[idx][2]
             y2 = boxes[idx][3]
-            if EdgeRatio<0.6:
+            if EdgeRatio<=0.65:
                 plural_list.append([text, EdgeRatio, x1, y1, x2, y2])
-            elif EdgeRatio > 0.6 and EdgeRatio < 1.05:
+            elif EdgeRatio > 0.65 and EdgeRatio < 1.05:
                 single_list.append([text, EdgeRatio, x1, y1, x2, y2])
 
-    # print(result_list)
-    # cv2.imwrite("C:/YiXianMemo/PyFiles/pictures/backup/res_output.png", res)
-    # print(plural_list)
-    # print(single_list)
+    print(result_list)
+    cv2.imwrite("C:/YiXianMemo/PyFiles/pictures/backup/res_output.png", res)
+    print(plural_list)
+    print(single_list)
 
     if len(plural_list) == 1:
         if len(single_list) == 0:
@@ -277,4 +277,4 @@ def extract_chinese(text):
     chinese_only = re.findall(r'[\u4e00-\u9fff]+', text)
     return ''.join(chinese_only)
 
-# print(Card_Name_OCR("C:/YiXianMemo/PyFiles/Pictures/backup/0.png"))
+print(Card_Name_OCR("C:/YiXianMemo/PyFiles/Pictures/backup/1.png"))

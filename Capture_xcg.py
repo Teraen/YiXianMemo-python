@@ -20,7 +20,7 @@ def capture_yxp_window(capture_mode, end_pos):
     left, top, right, bottom = win32gui.GetWindowRect(hwnd)
     width, height = right - left, bottom - top
     if capture_mode == "exchange1" or capture_mode == "absorb2" or capture_mode == "upgrade1":
-        left = int(-0.06 * width + end_pos[0])
+        left = int(-0.07 * width + end_pos[0])
         top = int(-0.13 * height + end_pos[1])
         width, height = int(0.05 * width), int(0.17 * height)
     elif capture_mode == "absorb1":
