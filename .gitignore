@@ -7,4 +7,6 @@
 !InputEvent_listener.py
 !Main.py
 !send_data.py
+!Version.txt
+!CheckUpdate.json
 !.gitignore
