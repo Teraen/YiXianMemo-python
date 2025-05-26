@@ -208,10 +208,10 @@ def Card_Name_OCR(img_path):
             elif EdgeRatio > 0.65 and EdgeRatio < 1.05:
                 single_list.append([text, EdgeRatio, x1, y1, x2, y2])
 
-    print(result_list)
-    cv2.imwrite("C:/YiXianMemo/PyFiles/pictures/backup/res_output.png", res)
-    print(plural_list)
-    print(single_list)
+    # print(result_list)
+    # cv2.imwrite("C:/YiXianMemo/PyFiles/pictures/backup/res_output.png", res)
+    # print(plural_list)
+    # print(single_list)
 
     if len(plural_list) == 1:
         if len(single_list) == 0:
@@ -277,4 +277,4 @@ def extract_chinese(text):
     chinese_only = re.findall(r'[\u4e00-\u9fff]+', text)
     return ''.join(chinese_only)
 
-print(Card_Name_OCR("C:/YiXianMemo/PyFiles/Pictures/backup/1.png"))
+# print(Card_Name_OCR("C:/YiXianMemo/PyFiles/Pictures/backup/1.png"))
