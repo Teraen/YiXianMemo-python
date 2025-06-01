@@ -4,6 +4,7 @@ from InputEvent_listener import start_drag_detector
 from Match_card import Match
 import os
 import shutil
+from send_data import send_data
 
 result_dict = {}
 queue_exchange = Queue(maxsize=20)
@@ -27,7 +28,7 @@ def Main(runningtype):
         # 启动所有子进程
         start_process()
         is_running = True
-        print("所有子进程已启动")
+        send_data("所有子进程已启动")
 
     if runningtype == "2":
         # 终止所有子进程
@@ -35,7 +36,7 @@ def Main(runningtype):
             p.terminate()
         processes.clear()  # 清空进程列表
         is_running = False
-        print("所有子进程已终止")
+        # print("所有子进程已终止")
 
     # get the result from queue_exchange and queue_draw
     while not queue_exchange.empty():
