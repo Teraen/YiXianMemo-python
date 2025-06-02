@@ -20,9 +20,9 @@ def capture_yxp_window(capture_mode, end_pos):
     left, top, right, bottom = win32gui.GetWindowRect(hwnd)
     width, height = right - left, bottom - top
     if capture_mode == "exchange1" or capture_mode == "absorb2" or capture_mode == "upgrade1":
-        left = int(-0.07 * width + end_pos[0])
+        left = int(-0.08 * width + end_pos[0])
         top = int(-0.13 * height + end_pos[1])
-        width, height = int(0.05 * width), int(0.17 * height)
+        width, height = int(0.06 * width), int(0.18 * height)
     elif capture_mode == "absorb1":
         left = int(-0.11*width + end_pos[0])
         top = int(0.65 * height + top)
@@ -58,7 +58,7 @@ def capture_yxp_window(capture_mode, end_pos):
 
 def capture_upgrade(end_pos):
     capture_yxp_window("upgrade1", end_pos)
-    timer = threading.Timer(0.15, lambda: capture_yxp_window("upgrade2", end_pos))
+    timer = threading.Timer(0.1, lambda: capture_yxp_window("upgrade2", end_pos))
     timer.start()
 
 

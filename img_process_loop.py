@@ -257,19 +257,19 @@ def Card_Name_OCR(img_path):
                 
     elif len(plural_list) == 0:
         if len(single_list) < 2:
-            return "NotFound"
+            return ""
         elif len(single_list) == 2:     
             if abs(single_list[0][2] - single_list[1][2]) < 0.04 * height:
                 cardname = str(single_list[0][0]) + str(single_list[1][0])
                 return extract_chinese(cardname)
             else:
-                return "NotFound"
+                return ""
         elif len(single_list) > 2:
-            return "NotFound"
+            return ""
         else:
-            return "NotFound"
+            return ""
     else:
-        return "NotFound"
+        return ""
 
 
 def extract_chinese(text):
