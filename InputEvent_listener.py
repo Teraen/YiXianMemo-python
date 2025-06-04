@@ -1,4 +1,3 @@
-import pygetwindow as gw
 import win32gui
 from pynput import mouse
 from Capture_xcg import capture_yxp_window, capture_upgrade
@@ -29,7 +28,7 @@ class DragDetector:
                 rect = win32gui.GetWindowRect(hwnd)# (left, top, right, bottom)
                 ExchArea = [int(0.8*(rect[2] - rect[0]) + rect[0]), int(0.7*(rect[3] - rect[1]) + rect[1])]
                 AbsoArea = [int(0.22*(rect[2] - rect[0]) + rect[0]), int(0.7*(rect[3] - rect[1]) + rect[1])]
-                print("在最顶端",str(rect),str(rect[2] - rect[0]),str(rect[3] - rect[1]))
+                # print("在最顶端",str(rect),str(rect[2] - rect[0]),str(rect[3] - rect[1]))
                 return rect  # (x1, y1, x2, y2)
         
         return None

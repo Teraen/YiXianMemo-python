@@ -104,7 +104,7 @@ def process_images_and_delete(folder_path):
                 result.append(ocr_result)
                 send_data(ocr_result)
                 # OCR成功后删除图片
-                if ocr_result == "NotFound":
+                if ocr_result == "":
                     shutil.copy(file_path, backup_dir + str(m) + ocr_result + ".png")
                 else:
                     shutil.copy(file_path, backup_dir + str(ocr_result) + ".png")
