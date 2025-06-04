@@ -3,10 +3,15 @@ import mss
 import mss.tools
 import os
 import threading
+from send_data import send_data
+import ctypes
+# 设置为感知 DPI 的进程，防止系统自动缩放窗口坐标
+ctypes.windll.shcore.SetProcessDpiAwareness(2)
 i=0
 # pictures_path = os.path.join(os.environ['USERPROFILE'], 'Pictures/YiXianMemo')
 dir_path = os.path.dirname(os.path.abspath(__file__))
 pictures_path = os.path.join(dir_path, 'Pictures')
+
 def capture_yxp_window(capture_mode, end_pos):
     global i
     """截图《弈仙牌》窗口区域"""
@@ -57,6 +62,7 @@ def capture_yxp_window(capture_mode, end_pos):
         i=i+1
 
 def capture_upgrade(end_pos):
+    # send_data("捕获升级图片")
     capture_yxp_window("upgrade1", end_pos)
     timer = threading.Timer(0.1, lambda: capture_yxp_window("upgrade2", end_pos))
     timer.start()

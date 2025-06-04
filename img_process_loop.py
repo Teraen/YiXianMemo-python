@@ -277,4 +277,7 @@ def extract_chinese(text):
     chinese_only = re.findall(r'[\u4e00-\u9fff]+', text)
     return ''.join(chinese_only)
 
-# print(Card_Name_OCR("C:/YiXianMemo/PyFiles/Pictures/backup/2.png"))
+# start_time = time.time()
+# print(Card_Name_OCR("C:/YiXianMemo/PyFiles/Pictures/backup/0.png"))
+# end_time = time.time()
+# print("处理时间：",str(end_time-start_time))

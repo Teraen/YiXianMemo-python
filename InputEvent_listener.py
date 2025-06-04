@@ -1,6 +1,9 @@
 import pygetwindow as gw
+import win32gui
 from pynput import mouse
 from Capture_xcg import capture_yxp_window, capture_upgrade
+from send_data import send_data
+import ctypes
 
 
 class DragDetector:
@@ -14,19 +17,36 @@ class DragDetector:
         global ExchArea
         global AbsoArea
         # """获取《弈仙牌》窗口的位置"""
-        win = None
-        for w in gw.getWindowsWithTitle("弈仙牌"):  # 找到游戏窗口（标题匹配）
-            win = w
-            break
-        if not win:
-            for w in gw.getWindowsWithTitle("Yi Xian"):  # 找到游戏窗口（标题匹配）
-                win = w
-                break
-        if win:
-            ExchArea = [int(0.8*(win.right-win.left)+win.left), int(0.7*(win.bottom-win.top)+win.top)]
-            AbsoArea = [int(0.22*(win.right-win.left)+win.left), int(0.7*(win.bottom-win.top)+win.top)]
-            return (win.left, win.top, win.right, win.bottom)  # (x1, y1, x2, y2)
+        
+
+        hwnd = win32gui.FindWindow(None, "弈仙牌")
+        if not hwnd:
+            hwnd = win32gui.FindWindow(None, "Yi Xian: Cultivation Card Game")
+        if hwnd:
+            foreground_hwnd = win32gui.GetForegroundWindow()
+            if foreground_hwnd == hwnd:
+                # win32gui.MoveWindow(hwnd, 100, 100, 800, 600, True)
+                rect = win32gui.GetWindowRect(hwnd)# (left, top, right, bottom)
+                ExchArea = [int(0.8*(rect[2] - rect[0]) + rect[0]), int(0.7*(rect[3] - rect[1]) + rect[1])]
+                AbsoArea = [int(0.22*(rect[2] - rect[0]) + rect[0]), int(0.7*(rect[3] - rect[1]) + rect[1])]
+                print("在最顶端",str(rect),str(rect[2] - rect[0]),str(rect[3] - rect[1]))
+                return rect  # (x1, y1, x2, y2)
+        
         return None
+        # win = None
+        # for w in gw.getWindowsWithTitle("弈仙牌"):  # 找到游戏窗口（标题匹配）
+        #     win = w
+        #     break
+        # if not win:
+        #     for w in gw.getWindowsWithTitle("Yi Xian"):  # 找到游戏窗口（标题匹配）
+        #         win = w
+        #         break
+        # print(str(win))
+        # if win:
+        #     ExchArea = [int(0.8*(win.right-win.left)+win.left), int(0.7*(win.bottom-win.top)+win.top)]
+        #     AbsoArea = [int(0.22*(win.right-win.left)+win.left), int(0.7*(win.bottom-win.top)+win.top)]
+        #     return (win.left, win.top, win.right, win.bottom)  # (x1, y1, x2, y2)
+        # return None
 
     def is_in_window(self, x, y):
         # """检查鼠标是否在《弈仙牌》窗口内部"""
@@ -41,6 +61,7 @@ class DragDetector:
         self.window_rect = self.get_game_window()
         if not self.is_in_window(x, y):  # 如果鼠标不在窗口内，直接忽略
             return
+        print("窗口内的输入")
         if button == mouse.Button.left:
             if pressed:
                 self.start_pos = (x, y)  # 记录起始位置
@@ -81,4 +102,6 @@ def start_drag_detector():
     with mouse.Listener(on_click=drag_detector.on_click, on_move=drag_detector.on_move) as listener:
         listener.join()
 if __name__ == "__main__":
+    # 设置为感知 DPI 的进程，防止系统自动缩放窗口坐标
+    ctypes.windll.shcore.SetProcessDpiAwareness(2)
     start_drag_detector()

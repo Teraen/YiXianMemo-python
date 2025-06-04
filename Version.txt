@@ -1,4 +1,13 @@
-
+v2.3.3
+    日期：2025.06.04
+    夸克网盘链接：https://pan.quark.cn/s/3c7e1c5d3b60
+    Github release: https://github.com/Teraen/YiXianMemo-python/releases/tag/Publish
+    说明：
+        修复置换卡的鼠标交互BUG
+        现在置换卡换牌时计数-1而非-3
+        新增部分Python进程的错误处理和日志记录
+        修复windows系统缩放非100%导致的画面捕获模块异常
+        优化画面捕获区域
 
 v2.3.2
     日期：2025.06.01

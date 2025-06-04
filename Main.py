@@ -14,11 +14,16 @@ processes = []
 dir_path = os.path.dirname(os.path.abspath(__file__))
 pictures_path = os.path.join(dir_path, 'Pictures')
 backup_dir = pictures_path + "/backup/"
-if os.path.exists(backup_dir):
-    shutil.rmtree(backup_dir)
+
+try:
+    if os.path.exists(backup_dir):
+        shutil.rmtree(backup_dir)
     os.makedirs(backup_dir)
-else:
-    os.makedirs(backup_dir)
+except Exception as e:
+    send_data("无法创建目录")
+
+# 置换卡清单
+exchange_tag = ["练笔", "以画入道", "触类旁通", "妙笔生花", ]
 
 def Main(runningtype):
     global processes, is_running
@@ -28,7 +33,7 @@ def Main(runningtype):
         # 启动所有子进程
         start_process()
         is_running = True
-        send_data("所有子进程已启动")
+        # send_data("子进程已创建")
 
     if runningtype == "2":
         # 终止所有子进程
@@ -36,18 +41,25 @@ def Main(runningtype):
             p.terminate()
         processes.clear()  # 清空进程列表
         is_running = False
-        # print("所有子进程已终止")
+        send_data("所有子进程已终止")
 
     # get the result from queue_exchange and queue_draw
+
     while not queue_exchange.empty():
         result_ex = queue_exchange.get()
         i=0
         while i < len(result_ex):
             rs = Match(result_ex[i])
-            if rs not in result_dict:
-                result_dict[rs] = -3
+            if any(item in result_ex[i] for item in exchange_tag):
+                if rs not in result_dict:
+                    result_dict[rs] = -1
+                else:
+                    result_dict[rs] -= 1
             else:
-                result_dict[rs] -= 3
+                if rs not in result_dict:
+                    result_dict[rs] = -3
+                else:
+                    result_dict[rs] -= 3
             i += 1
     while not queue_absorb.empty():
         result_dr = queue_absorb.get()
@@ -70,8 +82,12 @@ def Main(runningtype):
 
 def start_process():
     global processes
-    process1 = Process(target=img_process_loop, args=(queue_exchange, queue_absorb))
-    process2 = Process(target=start_drag_detector)
-    processes = [process1, process2]
-    process1.start()
-    process2.start()
+    try:
+        process1 = Process(target=img_process_loop, args=(queue_exchange, queue_absorb))
+        process2 = Process(target=start_drag_detector)
+        processes = [process1, process2]
+        process1.start()
+        process2.start()
+        send_data("已创建子进程")
+    except Exception as e:
+        send_data("启动子进程失败")
