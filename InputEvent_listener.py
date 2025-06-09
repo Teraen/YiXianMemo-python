@@ -3,7 +3,8 @@ from pynput import mouse
 from Capture_xcg import capture_yxp_window, capture_upgrade
 from send_data import send_data
 import ctypes
-
+import traceback
+import os
 
 class DragDetector:
     def __init__(self):
@@ -97,10 +98,17 @@ class DragDetector:
 
 # 监听鼠标事件
 def start_drag_detector():
-    drag_detector = DragDetector()
-    with mouse.Listener(on_click=drag_detector.on_click, on_move=drag_detector.on_move) as listener:
-        listener.join()
-if __name__ == "__main__":
-    # 设置为感知 DPI 的进程，防止系统自动缩放窗口坐标
-    ctypes.windll.shcore.SetProcessDpiAwareness(2)
-    start_drag_detector()
+    try:
+        ctypes.windll.shcore.SetProcessDpiAwareness(2)
+        drag_detector = DragDetector()
+        with mouse.Listener(on_click=drag_detector.on_click, on_move=drag_detector.on_move) as listener:
+            listener.join()
+    except Exception as e:
+        dir_path = os.path.dirname(os.path.abspath(__file__))
+        log_path = os.path.join(dir_path,"py_error_log.txt")
+        with open(log_path, "w", encoding="utf-8") as f:
+            traceback.print_exc(file=f)
+# if __name__ == "__main__":
+#     # 设置为感知 DPI 的进程，防止系统自动缩放窗口坐标
+#     ctypes.windll.shcore.SetProcessDpiAwareness(2)
+#     start_drag_detector()

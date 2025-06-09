@@ -6,12 +6,14 @@ from paddleocr import PaddleOCR
 import cv2
 import numpy as np
 import re
+import traceback
 
 upgraded_card = "None"
 m = 0
 n = 0
 # pictures_path = os.path.join(os.environ['USERPROFILE'], 'Pictures/YiXianMemo')
 dir_path = os.path.dirname(os.path.abspath(__file__))
+log_path = os.path.join(dir_path,"py_error_log.txt")
 pictures_path = os.path.join(dir_path, 'Pictures')
 backup_dir = pictures_path + "/backup/"
 det_dir=os.path.join(dir_path, 'Models/det')
@@ -58,31 +60,34 @@ except:
 
 
 def img_process_loop(queue_exchange, queue_absorb):
-    exchange_dir = pictures_path + "/exchange/"
-    absorb_dir = pictures_path + "/absorb/"
-    upgrade_dir = pictures_path + "/upgrade/"
-    if not os.path.exists(exchange_dir):
-        os.makedirs(exchange_dir)
-    if not os.path.exists(absorb_dir):
-        os.makedirs(absorb_dir) 
-    if not os.path.exists(upgrade_dir):
-        os.makedirs(upgrade_dir) 
-    while True:
-        #识别exchange图片
-        result1=process_images_and_delete(exchange_dir)
-        if result1:
-            queue_exchange.put(result1)
-        #识别absorb图片
-        result2=process_images_and_delete(absorb_dir)
-        if result2:
-            queue_absorb.put(result2)
-        # 识别upgrade图片
-        result3=process_upgrade_and_delete(upgrade_dir)
-        if result3:
-            queue_absorb.put(result3)
+    try:
+        exchange_dir = pictures_path + "/exchange/"
+        absorb_dir = pictures_path + "/absorb/"
+        upgrade_dir = pictures_path + "/upgrade/"
+        if not os.path.exists(exchange_dir):
+            os.makedirs(exchange_dir)
+        if not os.path.exists(absorb_dir):
+            os.makedirs(absorb_dir) 
+        if not os.path.exists(upgrade_dir):
+            os.makedirs(upgrade_dir) 
+        while True:
+            #识别exchange图片
+            result1=process_images_and_delete(exchange_dir)
+            if result1:
+                queue_exchange.put(result1)
+            #识别absorb图片
+            result2=process_images_and_delete(absorb_dir)
+            if result2:
+                queue_absorb.put(result2)
+            # 识别upgrade图片
+            result3=process_upgrade_and_delete(upgrade_dir)
+            if result3:
+                queue_absorb.put(result3)
 
-
-        time.sleep(1)  # 控制识别频率
+            time.sleep(1)  # 控制识别频率
+    except Exception as e:
+        with open(log_path, "w", encoding="utf-8") as f:
+            traceback.print_exc(file=f)
 
 
 def process_images_and_delete(folder_path):

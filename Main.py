@@ -15,12 +15,11 @@ dir_path = os.path.dirname(os.path.abspath(__file__))
 pictures_path = os.path.join(dir_path, 'Pictures')
 backup_dir = pictures_path + "/backup/"
 
-try:
-    if os.path.exists(backup_dir):
-        shutil.rmtree(backup_dir)
-    os.makedirs(backup_dir)
-except Exception as e:
-    send_data("无法创建目录")
+
+if os.path.exists(backup_dir):
+    shutil.rmtree(backup_dir)
+os.makedirs(backup_dir)
+
 
 # 置换卡清单
 exchange_tag = ["练笔", "以画入道", "触类旁通", "妙笔生花", ]
@@ -82,12 +81,9 @@ def Main(runningtype):
 
 def start_process():
     global processes
-    try:
-        process1 = Process(target=img_process_loop, args=(queue_exchange, queue_absorb))
-        process2 = Process(target=start_drag_detector)
-        processes = [process1, process2]
-        process1.start()
-        process2.start()
-        send_data("已创建子进程")
-    except Exception as e:
-        send_data("启动子进程失败")
+    process1 = Process(target=img_process_loop, args=(queue_exchange, queue_absorb))
+    process2 = Process(target=start_drag_detector)
+    processes = [process1, process2]
+    process1.start()
+    process2.start()
+    send_data("识别模块已启动")

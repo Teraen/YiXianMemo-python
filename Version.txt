@@ -1,7 +1,18 @@
+夸克：https://pan.quark.cn/s/3c7e1c5d3b60
+Github: https://github.com/Teraen/YiXianMemo-python/releases/tag/Publish
+
+v2.4.0
+    日期：尚未发布
+    说明：
+        实装YiSim模拟器支持。可以识别复盘模式下的各类信息，生成模拟器代码。
+        修改更新模块架构。主程序与Python脚本更新完全分离，为之后拓展更多功能提供支持。
+        针对弈仙牌不同分辨率进行优化
+        更好的图像预处理策略，提高识别正确率
+        优化部分引导描述
+        
+
 v2.3.3
     日期：2025.06.04
-    夸克网盘链接：https://pan.quark.cn/s/3c7e1c5d3b60
-    Github release: https://github.com/Teraen/YiXianMemo-python/releases/tag/Publish
     说明：
         修复置换卡的鼠标交互BUG
         现在置换卡换牌时计数-1而非-3
@@ -11,8 +22,6 @@ v2.3.3
 
 v2.3.2
     日期：2025.06.01
-    夸克网盘链接：https://pan.quark.cn/s/3c7e1c5d3b60
-    Github release: https://github.com/Teraen/YiXianMemo-python/releases/tag/Publish
     说明：
         1. 现在主程序更新包下载完成后,会自动关闭程序；修复下载补丁的进度条
         2. 增加了部分防呆提示（文件相对位置被改变）（wegame版本不适用）
@@ -22,7 +31,6 @@ v2.3.2
 
 v2.3.1
     日期：2025.5.30
-    夸克网盘链接：https://pan.quark.cn/s/3c7e1c5d3b60
     说明：
         1. 现在程序启动时将进行版本检验，如有更新则显示提醒图标
         2. 渲染模式改为OpenGL，提高设备兼容性
@@ -30,7 +38,6 @@ v2.3.1
 
 v2.3.0
     日期：2025.5.28
-    夸克网盘链接：https://pan.quark.cn/s/3c7e1c5d3b60
     说明：
         1. 热更新模块。
         除底层重大变更外，后续均可一键更新，分为版本迭代和微型补丁，区别如下：
@@ -46,7 +53,6 @@ v2.3.0
 
 v2.2.0
     日期：2025.5.22
-    夸克网盘链接：https://pan.quark.cn/s/3c7e1c5d3b60
     说明：
         1. 更新PaddleOCR版本至v5，调用逻辑重写
         2. 新增图片预处理，重做识别结果整理逻辑，显著提高识别准确率
