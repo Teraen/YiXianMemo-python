@@ -38,7 +38,7 @@ try:
         text_rec_score_thresh=0.7,
         text_det_box_thresh=0.3,
         text_det_thresh=0.3,
-        text_det_unclip_ratio=1.0,
+        text_det_unclip_ratio=1.2,
         device='CPU',
     ) 
 except:
@@ -52,26 +52,30 @@ except:
         text_line_orientation_model_dir=ori_dir,
         text_recognition_model_dir=rec_dir,
         text_rec_score_thresh=0.7,
-        text_det_box_thresh=0.3,
-        text_det_thresh=0.3,
-        text_det_unclip_ratio=1.0,
+        text_det_box_thresh=0.1,
+        text_det_thresh=0.1,
+        text_det_unclip_ratio=1.2,
         device='CPU',
     ) 
 
 def main():
     rect = get_window()
     if rect != None:
-        game_round_1 = get_round(rect)
+        game_round = get_round(rect)
         cultivation_1,cultivation_limit_1 = get_cultivation(rect)
         health_1 = get_health(rect)
         physique_1,physique_limit_1= get_physique(rect)
+        cards_1 = get_cards(rect)
+        get_talents(rect)
         print("rect:",rect,"width:",rect[2] - rect[0], "height:",rect[3] - rect[1])
-        print("round:",game_round_1)
-        print("cultivation:",cultivation_1)
+        print("round:",game_round)
+        print("cultivation_1:",cultivation_1)
         print("cultivation_limit_1:",cultivation_limit_1)
-        print("health:",health_1)
-        print("physique:",physique_1)
+        print("health_1:",health_1)
+        print("physique_1:",physique_1)
         print("physique_limit_1:",physique_limit_1)
+        print("cards_1:",cards_1)
+        # print("talents_1",talents_1)
 
 
 def get_window():
@@ -149,7 +153,8 @@ def get_round(rect):
     img = cv2.bitwise_and(img, img, mask=mask)
     img = 255-img
 
-    cv2.imwrite("C:/YiXianMemo/PyFiles/pictures/yisim/round.png", img)
+    # #保存图片
+    # cv2.imwrite("C:/YiXianMemo/PyFiles/pictures/yisim/round.png", img)
     
     result_lst = ocr.predict(img)
     try:
@@ -158,9 +163,10 @@ def get_round(rect):
     except:
         game_round = ""
 
-    for res in result_lst:
-        res.print()
-        res.save_to_img("C:/YiXianMemo/PyFiles/pictures/yisim/round/")
+    # #保存图片
+    # for res in result_lst:
+    #     res.print()
+    #     res.save_to_img("C:/YiXianMemo/PyFiles/pictures/yisim/round/")
 
     return game_round
 
@@ -179,27 +185,33 @@ def get_cultivation(rect):
     mask = cv2.inRange(hsv, lower, upper)
     img = cv2.bitwise_and(img, img, mask=mask)
     img = 255-img
-    cv2.imwrite("C:/YiXianMemo/PyFiles/pictures/yisim/cult.png", img)
+
+    # #保存图片
+    # cv2.imwrite("C:/YiXianMemo/PyFiles/pictures/yisim/cult.png", img)
 
     result_lst = ocr.predict(img)
     try:
         text = result_lst[0]['rec_texts'][0]
         if "/" in text:
             cult = text.split("/")[0]
+            cult = "".join(re.findall(r'\d', cult))
             limit = text.split("/")[1]
+            limit = "".join(re.findall(r'\d', limit))
         else:
-            cult = text
+            cult = "".join(re.findall(r'\d', text))
             try:
                 limit = result_lst[0]['rec_texts'][1]
+                limit = "".join(re.findall(r'\d', limit))
             except:
                 limit = ""
     except:
         cult = ""
         limit = ""
     
-    for res in result_lst:
-        res.print()
-        res.save_to_img("C:/YiXianMemo/PyFiles/pictures/yisim/cult/")
+    # #保存图片
+    # for res in result_lst:
+    #     res.print()
+    #     res.save_to_img("C:/YiXianMemo/PyFiles/pictures/yisim/cult/")
     
     return cult,limit
 
@@ -218,7 +230,9 @@ def get_health(rect):
     mask = cv2.inRange(hsv, lower, upper)
     img = cv2.bitwise_and(img, img, mask=mask)
     img = 255-img
-    cv2.imwrite("C:/YiXianMemo/PyFiles/pictures/yisim/health.png", img)
+
+    # #保存图片
+    # cv2.imwrite("C:/YiXianMemo/PyFiles/pictures/yisim/health.png", img)
 
     result_lst = ocr.predict(img)
     try:
@@ -226,9 +240,11 @@ def get_health(rect):
     except:
         health = ""
 
-    for res in result_lst:
-        res.print()
-        res.save_to_img("C:/YiXianMemo/PyFiles/pictures/yisim/health/")
+    # #保存图片
+    # for res in result_lst:
+    #     res.print()
+    #     res.save_to_img("C:/YiXianMemo/PyFiles/pictures/yisim/health/")
+
     return health
 
 def get_physique(rect):
@@ -246,7 +262,9 @@ def get_physique(rect):
     mask = cv2.inRange(hsv, lower, upper)
     img = cv2.bitwise_and(img, img, mask=mask)
     img = 255-img
-    cv2.imwrite("C:/YiXianMemo/PyFiles/pictures/yisim/physique.png", img)
+
+    # #保存图片
+    # cv2.imwrite("C:/YiXianMemo/PyFiles/pictures/yisim/physique.png", img)
 
     result_lst = ocr.predict(img)
     try:
@@ -263,36 +281,150 @@ def get_physique(rect):
     except:
         physi = ""
         limit = ""
-    
-    for res in result_lst:
-        res.print()
-        res.save_to_img("C:/YiXianMemo/PyFiles/pictures/yisim/physique/")
+
+    # #保存图片
+    # for res in result_lst:
+    #     res.print()
+    #     res.save_to_img("C:/YiXianMemo/PyFiles/pictures/yisim/physique/")
+
     return physi,limit
 
-def get_board(game_round):
-    pass
+def get_cards(rect):
+    cards = get_board(rect) + get_in_hand(rect)
+    return cards
 
-# def OCR_board():
-#     pass
+def get_board(rect):
+    Width = rect[2] - rect[0]
+    Top = int((rect[1] + rect[3])/2 - 0.13*Width) #中心锚点的控件位置
+    Left = int(rect[0] + 0.02*Width)
+    distance = int(0.1205*Width)
+    Height = int(0.09*Width)
+    Width = int(0.05*Width)
 
-def get_in_hand():
-    pass
+    cards = []
+    for i in range(8):
 
-# def OCR_in_hand():
-#     pass
+        img = capture(Top, Left, Width, Height)
+        hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
+        lower = numpy.array([0, 0, 0])
+        upper = numpy.array([0,0, 255])
+        mask = cv2.inRange(hsv, lower, upper)
+        img = cv2.bitwise_and(img, img, mask=mask)
+        img = 255-img
+        img_height = img.shape[0]
 
-def get_talents():
-    pass
+        # #保存图片
+        # cv2.imwrite("C:/YiXianMemo/PyFiles/pictures/yisim/" + str(i) + "board.png", img)
+
+        card = ""
+        result_lst = ocr.predict(img)
+        card = join_OCR_result(result_lst, img_height)
+
+        # #保存图片
+        # for res in result_lst:
+        #     res.print()
+        #     res.save_to_img("C:/YiXianMemo/PyFiles/pictures/yisim/board" + str(i) + "/")
+
+        cards.append(card)
+        
+        Left = Left + distance
+    return cards
+
+def get_in_hand(rect):
+    cards = []
+    return cards
+
+def get_talents(rect):
+    move_mouse_to(rect[0],rect[1])
     # return char,talents,param
-
-# def OCR_talents():
-#     pass
 
 def get_plant_effectS():
     pass
 
 def OCR():
     pass
+
+def join_OCR_result(result_list, height):
+    plural_list = []
+    single_list = []
+    texts = result_list[0]['rec_texts']
+    boxes = result_list[0]['rec_boxes']
+    for idx in range(len(texts)):
+        text = texts[idx]
+        # print(text)
+        if text:
+            EdgeRatio=float((boxes[idx][2]-boxes[idx][0])/(boxes[idx][3]-boxes[idx][1]))
+            x1 = boxes[idx][0]
+            y1 = boxes[idx][1]
+            x2 = boxes[idx][2]
+            y2 = boxes[idx][3]
+            if EdgeRatio<=0.65:
+                plural_list.append([text, EdgeRatio, x1, y1, x2, y2])
+            elif EdgeRatio > 0.65 and EdgeRatio < 1.2:
+                single_list.append([text, EdgeRatio, x1, y1, x2, y2])
+
+    # print(result_list)
+    # cv2.imwrite("C:/YiXianMemo/PyFiles/pictures/backup/res_output.png", res)
+    # print(plural_list)
+    # print(single_list)
+
+    if len(plural_list) == 1:
+        if len(single_list) == 0:
+            return extract_chinese(plural_list[0][0])
+        elif len(single_list) > 0:
+            offset = ((plural_list[0][3] + plural_list[0][5]) / 2 - height / 2) / height
+            print("offset:", offset)
+            if offset > -0.08 and offset < 0.08:
+                return extract_chinese(plural_list[0][0])
+            else:
+                for idx in range(len(single_list)):
+                    if abs(single_list[idx][2] - plural_list[0][2]) < 0.04 * height:
+                        if offset < -0.07:
+                            card_name = plural_list[0][0] + single_list[idx][0]
+                        else:
+                            card_name = single_list[idx][0] + plural_list[0][0]
+                        return extract_chinese(card_name)
+                return extract_chinese(plural_list[0][0])
+            
+    elif len(plural_list) == 2:
+        if abs(plural_list[0][2]-plural_list[1][2]) < 0.04 * height:
+            card_name = plural_list[0][0] + plural_list[1][0]
+            return extract_chinese(card_name)
+        elif plural_list[0][2] > plural_list[1][2]:
+            index = 0
+        else:
+            index = 1
+        offset = ((plural_list[index][3] + plural_list[index][5]) / 2 - height / 2) / height
+        print("offset:", offset)
+        if offset > -0.08 and offset < 0.08:
+            return extract_chinese(plural_list[index][0])
+        elif len(single_list) == 0:
+            return extract_chinese(plural_list[index][0])
+        else:
+            for idx in range(len(single_list)):
+                if abs(single_list[idx][2] - plural_list[index][2]) < 0.04 * height:
+                    if offset < -0.07:
+                        card_name = plural_list[index][0] + single_list[idx][0]
+                    else:
+                        card_name = single_list[idx][0] + plural_list[index][0]
+                    return extract_chinese(card_name)
+            return extract_chinese(plural_list[index][0])
+                
+    elif len(plural_list) == 0:
+        if len(single_list) < 2:
+            return ""
+        elif len(single_list) == 2:     
+            if abs(single_list[0][2] - single_list[1][2]) < 0.04 * height:
+                cardname = str(single_list[0][0]) + str(single_list[1][0])
+                return extract_chinese(cardname)
+            else:
+                return ""
+        elif len(single_list) > 2:
+            return ""
+        else:
+            return ""
+    else:
+        return ""
 
 def capture(top,left,width,height):
     with mss.mss() as sct:    
@@ -315,6 +447,10 @@ def move_mouse_to(x,y):
     # 设置鼠标绝对位置
     mouse.position = (x, y)
     # 相对移动鼠标
-    # mouse.move(100, -50)
+    # mouse.move(-1000, -50)
 
+def extract_chinese(text):
+    # 匹配所有汉字范围
+    chinese_only = re.findall(r'[\u4e00-\u9fff]+', text)
+    return ''.join(chinese_only)
 main()

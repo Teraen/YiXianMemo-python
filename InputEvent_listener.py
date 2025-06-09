@@ -22,6 +22,8 @@ class DragDetector:
         hwnd = win32gui.FindWindow(None, "弈仙牌")
         if not hwnd:
             hwnd = win32gui.FindWindow(None, "Yi Xian: Cultivation Card Game")
+        if not hwnd:
+            hwnd = win32gui.FindWindow(None, "YiXianPai")
         if hwnd:
             foreground_hwnd = win32gui.GetForegroundWindow()
             if foreground_hwnd == hwnd:
