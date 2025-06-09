@@ -1,7 +1,6 @@
 import time                                              # 延时控制
 import sys                                               # 命令行参数处理
 import os
-import subprocess
 from send_data import send_data
 import traceback
 
