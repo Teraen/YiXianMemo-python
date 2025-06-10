@@ -3,6 +3,7 @@ import win32api
 import win32con
 import win32gui
 import win32com.client
+import pynput
 from pynput.mouse import Controller
 from paddleocr import PaddleOCR
 import numpy
@@ -14,9 +15,9 @@ import ctypes
 import cv2
 import re
 from send_data import send_data
+import time
 
 ctypes.windll.shcore.SetProcessDpiAwareness(2)
-
 dir_path = os.path.dirname(os.path.abspath(__file__))
 yisim_path = os.path.join(dir_path,"Pictures/yisim/")
 if os.path.exists(yisim_path):
@@ -52,8 +53,8 @@ except:
         text_line_orientation_model_dir=ori_dir,
         text_recognition_model_dir=rec_dir,
         text_rec_score_thresh=0.7,
-        text_det_box_thresh=0.1,
-        text_det_thresh=0.1,
+        text_det_box_thresh=0.3,
+        text_det_thresh=0.3,
         text_det_unclip_ratio=1.2,
         device='CPU',
     ) 
@@ -61,22 +62,22 @@ except:
 def main():
     rect = get_window()
     if rect != None:
-        game_round = get_round(rect)
-        cultivation_1,cultivation_limit_1 = get_cultivation(rect)
-        health_1 = get_health(rect)
-        physique_1,physique_limit_1= get_physique(rect)
-        cards_1 = get_cards(rect)
-        get_talents(rect)
+        move_mouse_to(0,0)
+        # game_round = get_round(rect)
+        # cultivation_1,cultivation_limit_1 = get_cultivation(rect)
+        # health_1 = get_health(rect)
+        # physique_1,physique_limit_1= get_physique(rect)
+        # cards_1 = get_cards(rect)
+        talents_1,swordplay_talent_cards,five_elements_pure_vase_cards = get_talents(rect)
         print("rect:",rect,"width:",rect[2] - rect[0], "height:",rect[3] - rect[1])
-        print("round:",game_round)
-        print("cultivation_1:",cultivation_1)
-        print("cultivation_limit_1:",cultivation_limit_1)
-        print("health_1:",health_1)
-        print("physique_1:",physique_1)
-        print("physique_limit_1:",physique_limit_1)
-        print("cards_1:",cards_1)
-        # print("talents_1",talents_1)
-
+        # print("round:",game_round)
+        # print("cultivation_1:",cultivation_1)
+        # print("cultivation_limit_1:",cultivation_limit_1)
+        # print("health_1:",health_1)
+        # print("physique_1:",physique_1)
+        # print("physique_limit_1:",physique_limit_1)
+        # print("cards_1:",cards_1)
+        print("talents_1",talents_1,"\nswordplay_talent_cards:",swordplay_talent_cards,"\nfive_elements_pure_vase_cards:",five_elements_pure_vase_cards)
 
 def get_window():
     hwnd = win32gui.FindWindow(None, "弈仙牌")
@@ -148,7 +149,7 @@ def get_round(rect):
 
     hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
     lower = numpy.array([0, 0, 115])
-    upper = numpy.array([179, 30, 255])
+    upper = numpy.array([179, 255, 255])
     mask = cv2.inRange(hsv, lower, upper)
     img = cv2.bitwise_and(img, img, mask=mask)
     img = 255-img
@@ -172,9 +173,9 @@ def get_round(rect):
 
 def get_cultivation(rect):
     Width = rect[2] - rect[0]
-    Top = int((rect[1] + rect[3])/2 - 0.19*Width) #中心锚点的控件位置
+    Top = int((rect[1] + rect[3])/2 - 0.195*Width) #中心锚点的控件位置
     Left = int(rect[0] + 0.065*Width)
-    Height = int(0.04*Width)
+    Height = int(0.05*Width)
     Width = int(0.06*Width)
 
     img = capture(Top, Left, Width, Height)
@@ -307,7 +308,7 @@ def get_board(rect):
         img = capture(Top, Left, Width, Height)
         hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
         lower = numpy.array([0, 0, 0])
-        upper = numpy.array([0,0, 255])
+        upper = numpy.array([0, 0, 255])
         mask = cv2.inRange(hsv, lower, upper)
         img = cv2.bitwise_and(img, img, mask=mask)
         img = 255-img
@@ -335,13 +336,139 @@ def get_in_hand(rect):
     return cards
 
 def get_talents(rect):
-    move_mouse_to(rect[0],rect[1])
-    # return char,talents,param
+    Window_Width = rect[2] - rect[0]
+    pos = [[rect[0] + 0.135*Window_Width,rect[3] - 0.025*Window_Width],
+    [rect[0] + 0.088*Window_Width,rect[3] - 0.037*Window_Width],
+    [rect[0] + 0.044*Window_Width,rect[3] - 0.071*Window_Width],
+    [rect[0] + 0.042*Window_Width,rect[3] - 0.123*Window_Width],
+    [rect[0] + 0.0670*Window_Width,rect[3] - 0.173*Window_Width]
+    ]
+    talents = []
+    swordplay_talent_cards = []
+    five_elements_pure_vase_cards = []
+
+    Tops = [
+        int(rect[3] - 0.18*Window_Width),
+        int(rect[3] - 0.12*Window_Width),
+        int(rect[3] - 0.15*Window_Width),
+        int(rect[3] - 0.18*Window_Width),
+        int(rect[3] - 0.25*Window_Width)
+        ]#底部锚点的控件位置
+    Heights = [
+        int(0.18*Window_Width),
+        int(0.10*Window_Width),
+        int(0.10*Window_Width),
+        int(0.10*Window_Width),
+        int(0.10*Window_Width),
+        ]
+    for i in range(5):
+        move_mouse_to(pos[i][0], pos[i][1]) 
+        Left = int(pos[i][0]+ 0.04*Window_Width)
+        Width = int(0.22*Window_Width)
+
+        time.sleep(0.2)
+
+        img = capture(Tops[i],Left,Width,Heights[i])
+        hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
+        lower = numpy.array([25, 150, 0])
+        upper = numpy.array([35, 195, 255])
+        mask = cv2.inRange(hsv, lower, upper)
+        img_talents = cv2.bitwise_and(img, img, mask=mask)
+        # img = 255-img
+
+        #保存图片
+        cv2.imwrite("C:/YiXianMemo/PyFiles/pictures/yisim/" + str(i) + "talent.png", img_talents)
+        cv2.imwrite("C:/YiXianMemo/PyFiles/pictures/yisim/" + str(i) + "description.png", img)
+
+        result_lst = ocr.predict(img_talents)
+        try:
+            talent = result_lst[0]['rec_texts'][0]
+            talent = extract_chinese(talent)
+        except:
+            talent = ""
+        if talent != "":
+            talents.append(talent)
+
+        # #保存图片
+        # for res in result_lst:
+        #     res.print()
+        #     res.save_to_img("C:/YiXianMemo/PyFiles/pictures/yisim/talents" + str(i) + "/")
+
+        if talent == "悟剑天赋":
+            hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
+            hue = [100,136,16]
+            
+            for i in range(3):
+                lower = numpy.array([hue[i] - 5, 120, 0])
+                upper = numpy.array([hue[i] + 5, 160, 255])
+                mask = cv2.inRange(hsv, lower, upper)
+                img_swordplay = cv2.bitwise_and(img, img, mask=mask)
+                #保存图片
+                cv2.imwrite("C:/YiXianMemo/PyFiles/pictures/yisim/" + str(i) + "img_swordplay.png", img_swordplay)
+
+                result_lst = ocr.predict(img_swordplay)
+                try:
+                    swordplay_talent_card = result_lst[0]['rec_texts'][0]
+                    swordplay_talent_card = extract_chinese(swordplay_talent_card)
+                    swordplay_talent_cards.append(swordplay_talent_card)
+                    try:
+                        swordplay_talent_card = result_lst[0]['rec_texts'][1]
+                        swordplay_talent_card = extract_chinese(swordplay_talent_card)
+                        swordplay_talent_cards.append(swordplay_talent_card)
+                    except:
+                        swordplay_talent_card = ""
+                except:
+                    swordplay_talent_card = ""
+
+                #保存图片
+                for res in result_lst:
+                    res.print()
+                    res.save_to_img("C:/YiXianMemo/PyFiles/pictures/yisim/img_swordplay" + str(i) + "/")
+            
+        if talent == "五行玉瓶":
+            keyboard = pynput.keyboard.Controller()
+            keyboard.press("q")
+            keyboard.release('q')
+            time.sleep(0.5)
+
+            Top = int((rect[1] + rect[3])/2 - 0.118*Window_Width) #中心锚点的控件位置
+            Left = int(rect[0] + 0.52*Window_Width)
+            distance = int(0.15*Window_Width)
+            Height = int(0.1*Window_Width)
+            Width = int(0.05*Window_Width)
+
+            for i in range(3):
+                img = capture(Top, Left, Width, Height)
+                hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
+                lower = numpy.array([0, 0, 0])
+                upper = numpy.array([0, 0, 255])
+                mask = cv2.inRange(hsv, lower, upper)
+                img = cv2.bitwise_and(img, img, mask=mask)
+                img = 255-img
+                img_height = img.shape[0]
+
+                # #保存图片
+                # cv2.imwrite("C:/YiXianMemo/PyFiles/pictures/yisim/" + str(i) + "5e_vase.png", img)
+
+                card = ""
+                result_lst = ocr.predict(img)
+                card = join_OCR_result(result_lst, img_height)
+                
+                # #保存图片
+                # for res in result_lst:
+                #     res.print()
+                #     res.save_to_img("C:/YiXianMemo/PyFiles/pictures/yisim/5e_vase" + str(i) + "/")
+                if card != "":
+                    five_elements_pure_vase_cards.append(card)
+
+                Left = Left + distance
+            keyboard.press("q")
+            keyboard.release('q')
+
+
+    return talents,swordplay_talent_cards,five_elements_pure_vase_cards
 
 def get_plant_effectS():
-    pass
-
-def OCR():
     pass
 
 def join_OCR_result(result_list, height):
@@ -373,7 +500,7 @@ def join_OCR_result(result_list, height):
             return extract_chinese(plural_list[0][0])
         elif len(single_list) > 0:
             offset = ((plural_list[0][3] + plural_list[0][5]) / 2 - height / 2) / height
-            print("offset:", offset)
+            # print("offset:", offset)
             if offset > -0.08 and offset < 0.08:
                 return extract_chinese(plural_list[0][0])
             else:
@@ -440,7 +567,6 @@ def set_clipboard_text(text):
     clip.EmptyClipboard()
     clip.SetClipboardData(win32con.CF_UNICODETEXT, text)
     clip.CloseClipboard()
-
 
 def move_mouse_to(x,y):
     mouse = Controller()

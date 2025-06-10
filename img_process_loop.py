@@ -195,6 +195,7 @@ def Card_Name_OCR(img_path):
 
     mask = cv2.inRange(hsv, lower, upper)
     res = cv2.bitwise_and(img, img, mask=mask)
+    res = 255-res
     result_list = ocr.predict(res)
 
     texts = result_list[0]['rec_texts']
