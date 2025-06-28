@@ -1,13 +1,12 @@
 夸克：https://pan.quark.cn/s/3c7e1c5d3b60
 Github: https://github.com/Teraen/YiXianMemo-python/releases/tag/Publish
 
-v2.4.0
-    日期：尚未发布
+
+
+v2.3.4
+    日期：2025.6.28
     说明：
-        实装YiSim模拟器支持。可以识别复盘模式下的各类信息，生成模拟器代码。
-        修改更新模块架构。主程序与Python脚本更新完全分离，为之后拓展更多功能提供支持。
-        针对弈仙牌不同分辨率进行优化
-        更好的图像预处理策略，提高识别正确率
+        改用官方提供的数据，暂时弃用OCR。因此现在不支持拔线操作
         优化部分引导描述
         
 
