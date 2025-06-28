@@ -1,7 +1,10 @@
 夸克：https://pan.quark.cn/s/3c7e1c5d3b60
 Github: https://github.com/Teraen/YiXianMemo-python/releases/tag/Publish
 
-
+v2.3.5
+    日期：2025.6.28
+    说明：
+        添加浮窗。展示余量较少的卡牌。
 
 v2.3.4
     日期：2025.6.28
