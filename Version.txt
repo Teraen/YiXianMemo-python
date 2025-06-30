@@ -1,6 +1,11 @@
 夸克：https://pan.quark.cn/s/3c7e1c5d3b60
 Github: https://github.com/Teraen/YiXianMemo-python/releases/tag/Publish
 
+v2.3.6
+    日期：2025.6.30
+    说明：
+        修复一些bug
+
 v2.3.5
     日期：2025.6.28
     说明：
