@@ -1,12 +1,27 @@
 夸克：https://pan.quark.cn/s/3c7e1c5d3b60
 Github: https://github.com/Teraen/YiXianMemo-python/releases/tag/Publish
 
+
+
+
+
+v2.3.8
+    日期：2025.07.01
+    说明：
+        Overlay信息：
+            添加本轮命元伤害范围
+            3张的卡牌不再展示，新增展示0张以及过删的卡牌
+            现在卡牌按数量、境界分组排序
+            新增调节位置和躲避鼠标的补间动画
+        性能相关：
+            重构部分早期代码，降低内存占用
+        
+
 v2.3.7
     日期：2025.07.01
     说明：
         UI层级优化
         ToolTips优化
-
         以下功能仅作用于读取操作记录模式（而非OCR）:
             门派自动选择
             副职自动选择
