@@ -17,7 +17,10 @@ if __name__ == "__main__":
         # 处理命令行参数（允许自定义Main.py运行状态）
         if len(sys.argv) > 1:
             runningtype = sys.argv[1]
+
+            #循环执行
         while True:
+            #OCR的回传数据获取和拖动、识别监听启动
             Data = Main(runningtype)
             runningtype = "1" 
             if Data != "":
